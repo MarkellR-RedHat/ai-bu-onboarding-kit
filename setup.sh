@@ -184,7 +184,8 @@ show_header() {
  /_/   \_\___| |____/ \___/  |_| |_|\__,_|_.__/
 ASCIIEOF
   echo -e "${NC}"
-  echo -e "  ${BOLD}AI BU toolkit setup${NC}  ${DIM}v${VERSION}${NC}"
+  echo -e "  ${BOLD}AI BU Hub${NC}  ${DIM}v${VERSION}${NC}"
+  echo -e "  ${DIM}17 tools / 122 slash commands / one-command setup${NC}"
   echo ""
 
   if $DRY_RUN; then
@@ -779,7 +780,7 @@ sync_repos() {
 # 4. Install slash commands
 # -------------------------------------------------------
 install_commands() {
-  step "Registering slash commands"
+  step "Registering commands"
   show_eta
 
   # Files to skip (not commands)
@@ -1004,31 +1005,17 @@ print_summary() {
     return
   fi
 
-  echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
-  echo -e "  ${GREEN}${BOLD}  DONE${NC}"
-  echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
+  echo -e "  ${GREEN}${BOLD}Setup complete.${NC}"
   echo ""
-  echo -e "  ${BOLD}${GREEN}${COMMANDS_INSTALLED}${NC}${BOLD} slash commands registered in Claude Code.${NC}"
-  echo ""
-
-  # Stats
-  echo -e "  ${BOLD}Installed${NC}"
-  echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
-  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Slash commands" "$COMMANDS_INSTALLED"
-  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Tool repos" "$((REPOS_CLONED + REPOS_UPDATED))"
+  echo -e "  ${BOLD}${GREEN}${COMMANDS_INSTALLED}${NC} commands registered  ${DIM}|${NC}  ${BOLD}${GREEN}$((REPOS_CLONED + REPOS_UPDATED))${NC} tools installed  ${DIM}|${NC}  ${DIM}${minutes}m ${seconds}s${NC}"
   if $MCP_CONFIGURED; then
-    printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "MCP servers" "configured"
+    echo -e "  MCP servers: ${GREEN}GitHub${NC}, ${GREEN}Fetch${NC}"
   fi
-  printf "  %-30s ${DIM}%s${NC}\n" "Setup time" "${minutes}m ${seconds}s"
   echo ""
 
-  # File locations
-  echo -e "  ${BOLD}File locations${NC}"
-  echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
-  echo -e "  Commands      ${DIM}$COMMANDS_DIR${NC}"
-  echo -e "  Hub repos     ${DIM}$CLONE_DIR${NC}"
-  echo -e "  MCP config    ${DIM}$MCP_CONFIG${NC}"
-  echo -e "  Backups       ${DIM}$BACKUP_DIR${NC}"
+  echo -e "  ${DIM}Commands   $COMMANDS_DIR${NC}"
+  echo -e "  ${DIM}Repos      $CLONE_DIR${NC}"
+  echo -e "  ${DIM}MCP        $MCP_CONFIG${NC}"
 
   # Failures (friendly, non-scary, actionable)
   if [[ ${#FAILED_REPOS[@]} -gt 0 ]]; then
@@ -1053,26 +1040,25 @@ print_summary() {
   fi
 
   echo ""
-  echo -e "  ${BOLD}${GREEN}Try first:${NC}"
+  echo -e "  ${BOLD}Try it now${NC}"
   echo ""
   echo -e "    ${CYAN}claude /read-the-room${NC}"
-  echo -e "    ${DIM}Paste a message, get back what is actually being said.${NC}"
+  echo -e "    ${DIM}Paste any message. Get back what is really being said.${NC}"
   echo ""
-  echo -e "  ${BOLD}Other useful ones:${NC}"
+  echo -e "  ${BOLD}Five more to try${NC}"
   echo ""
-  echo -e "  ${CYAN}1${NC}  claude /briefing        ${DIM}Your daily GitHub activity summary${NC}"
-  echo -e "  ${CYAN}2${NC}  claude /polish          ${DIM}Clean up a rough email or message${NC}"
-  echo -e "  ${CYAN}3${NC}  claude /status-report   ${DIM}Generate a weekly status report from Git${NC}"
-  echo -e "  ${CYAN}4${NC}  claude /style-check     ${DIM}Check writing against Red Hat style${NC}"
+  echo -e "    ${CYAN}/briefing${NC}          ${DIM}Morning GitHub activity summary${NC}"
+  echo -e "    ${CYAN}/polish${NC}            ${DIM}Clean up a rough email or message${NC}"
+  echo -e "    ${CYAN}/status-report${NC}     ${DIM}Weekly status report from Git history${NC}"
+  echo -e "    ${CYAN}/style-check${NC}       ${DIM}Check writing against Red Hat style${NC}"
+  echo -e "    ${CYAN}/speedread${NC}         ${DIM}Summarize any long document in seconds${NC}"
   echo ""
-  echo -e "  ${DIM}Guided walkthrough:  first-steps.md${NC}"
-  echo -e "  ${DIM}Full command list:   commands-cheatsheet.md${NC}"
+  echo -e "  ${DIM}Guided walkthrough     first-steps.md${NC}"
+  echo -e "  ${DIM}Full command list       commands-cheatsheet.md${NC}"
   echo ""
-  echo -e "  ${BOLD}Management${NC}"
-  echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
-  echo -e "  Update all tools     ${CYAN}./update.sh${NC}"
-  echo -e "  Verify installation  ${CYAN}./verify.sh${NC}"
-  echo -e "  Uninstall            ${CYAN}./uninstall.sh${NC}"
+  echo -e "  ${DIM}Update     ./update.sh${NC}"
+  echo -e "  ${DIM}Verify     ./verify.sh${NC}"
+  echo -e "  ${DIM}Uninstall  ./uninstall.sh${NC}"
   echo ""
 }
 

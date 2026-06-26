@@ -1,6 +1,6 @@
 # AI BU Hub / Command Reference
 
-130+ slash commands, organized by workflow. All commands work globally from any directory.
+122 slash commands, organized by workflow. All commands work globally from any directory.
 
 ---
 
