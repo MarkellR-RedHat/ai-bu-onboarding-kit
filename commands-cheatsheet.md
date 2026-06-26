@@ -1,6 +1,25 @@
-# AI BU Hub - Complete Command Reference
+# AI BU Hub / Command Reference
 
-Every slash command across all 17 tools, organized by workflow. 100+ commands at your fingertips.
+130+ slash commands organized by workflow. Every command works globally from any directory.
+
+---
+
+## Greatest Hits
+
+The 10 commands people use most. Start here.
+
+| Command | What it does |
+|---------|-------------|
+| `/briefing` | Morning GitHub activity summary with priorities |
+| `/polish` | Clean up any rough draft while keeping your voice |
+| `/read-the-room` | Decode what a message is really saying |
+| `/status-report` | Weekly status report from Git history and PRs |
+| `/style-check` | Check content against Red Hat writing guidelines |
+| `/speedread` | Summarize any long document or web page |
+| `/meeting-notes` | Structure raw notes into decisions and action items |
+| `/shorten` | Cut a message to half its length, keep the meaning |
+| `/slides` | Build a complete presentation outline |
+| `/cfp` | Draft a conference talk proposal |
 
 ---
 
@@ -41,7 +60,9 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 
 ---
 
-## Daily Workflow
+## Starting Your Day
+
+Open your terminal, run these two commands, and know exactly where to focus.
 
 ### Morning Briefing (ai-bu-daily-briefing)
 
@@ -55,20 +76,17 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/week-ahead` | Preview of what is coming up this week |
 | `/weekly-digest` | End-of-week summary of all activity |
 
-### Status Reports (ai-bu-status-report)
-
-| Command | Description |
-|---------|-------------|
-| `/status-report` | Weekly status report from Git history and PRs |
-| `/executive-summary` | High-level summary for leadership |
-| `/team-report` | Aggregate status across multiple team members |
-| `/okr-update` | Progress update mapped to OKRs |
-| `/quarterly-review` | Quarterly accomplishments and metrics |
-| `/status-trends` | Track trends across multiple status periods |
+```bash
+# The morning two-punch
+claude /briefing            # What happened overnight
+claude /risk-radar          # Anything on fire?
+```
 
 ---
 
-## Communication
+## Writing a Message
+
+Before you hit send on anything, run it through these.
 
 ### Message Polishing (ai-bu-message-polisher)
 
@@ -85,6 +103,12 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/cross-cultural` | Adapt a message for a different culture or region |
 | `/thread-summary` | Summarize a long Slack or email thread |
 
+```bash
+# Before sending any important message
+claude /polish "your draft"
+claude /style-check "the polished version"
+```
+
 ### Style and Tone (ai-bu-style-checker)
 
 | Command | Description |
@@ -100,7 +124,9 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 
 ---
 
-## Meetings
+## Preparing for a Meeting
+
+Run these before, during, and after any meeting that matters.
 
 ### Meeting Notes (ai-bu-meeting-notes)
 
@@ -117,9 +143,44 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/meeting-email` | Draft a follow-up email from meeting notes |
 | `/meeting-cancel` | Assess whether a meeting should be an email instead |
 
+```bash
+# Full meeting workflow
+claude /pre-brief           # Prepare before
+# ... attend the meeting ...
+claude /meeting-notes       # Structure your raw notes
+claude /action-items        # Extract every action item
+claude /meeting-email       # Draft the follow-up email
+```
+
 ---
 
-## Content Creation
+## End of Week / End of Sprint
+
+Generate your status update in minutes instead of spending Friday afternoon remembering what you did.
+
+### Status Reports (ai-bu-status-report)
+
+| Command | Description |
+|---------|-------------|
+| `/status-report` | Weekly status report from Git history and PRs |
+| `/executive-summary` | High-level summary for leadership |
+| `/team-report` | Aggregate status across multiple team members |
+| `/okr-update` | Progress update mapped to OKRs |
+| `/quarterly-review` | Quarterly accomplishments and metrics |
+| `/status-trends` | Track trends across multiple status periods |
+
+```bash
+# Friday status update pipeline
+claude /status-report       # Generate from Git history
+claude /polish "..."        # Tighten the language
+claude /style-check "..."   # Final quality pass
+```
+
+---
+
+## Writing Content
+
+Blog posts, conference talks, presentations, and documentation.
 
 ### Conference Proposals (ai-bu-cfp-generator)
 
@@ -135,6 +196,13 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/talk-to-blog` | Convert talk content into a blog post |
 | `/workshop-proposal` | Draft a workshop or tutorial proposal |
 
+```bash
+# Content creation pipeline
+claude /cfp                 # Draft the proposal
+claude /cfp-reviewer        # Simulate a reviewer scoring it
+claude /cfp-variants        # Try different angles
+```
+
 ### Presentations (ai-bu-slide-outliner)
 
 | Command | Description |
@@ -149,6 +217,15 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/slide-visuals` | Art direction for slide visuals |
 | `/slide-to-marp` | Convert an outline to Marp markdown format |
 
+```bash
+# Presentation workflow
+claude /slides              # Build the outline
+claude /slide-hooks         # Nail the opening
+claude /slide-pacing        # Check the timing
+claude /slide-review        # Get honest feedback
+claude /slide-to-marp       # Convert to Marp for rendering
+```
+
 ### Writing (ai-bu-claude-commands)
 
 | Command | Description |
@@ -161,7 +238,49 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 
 ---
 
-## Intelligence and Tracking
+## Researching Something
+
+Summarize documents, get second opinions, and stress-test your thinking.
+
+### Speed Reader (ai-bu-speed-reader)
+
+| Command | Description |
+|---------|-------------|
+| `/speedread` | Full summary of a long document or web page |
+| `/speedread-verdict` | Quick "read it or skip it" assessment |
+| `/speedread-bullets` | The fastest possible summary, just the signal |
+| `/speedread-extract` | Pull every concrete fact and number |
+| `/speedread-eli5` | Explain so a non-technical person understands |
+| `/speedread-annotate` | Annotated version with inline commentary |
+| `/speedread-compare` | Compare two documents side by side |
+| `/speedread-questions` | Generate the questions a peer reviewer would ask |
+| `/speedread-chain` | Map intellectual lineage and related work |
+
+```bash
+# Research workflow
+claude /speedread doc.pdf   # Get the summary
+claude /speedread-extract   # Pull the facts
+claude /speedread-verdict   # Worth the full read?
+```
+
+### Persona Reviews (ai-bu-review-as-persona)
+
+| Command | Description |
+|---------|-------------|
+| `/review-as` | Get feedback from any persona you describe |
+| `/review-for-audience` | Simulate a custom audience reading your content |
+| `/review-multi` | Run multiple personas on the same content |
+| `/red-team` | Adversarial review to find weaknesses |
+| `/debate` | Stage a two-persona debate about your content |
+| `/persona-builder` | Build a detailed persona for repeated use |
+| `/empathy-map` | Create a UX empathy map for a persona |
+| `/rewrite-for` | Rewrite content as a specific persona would write it |
+
+---
+
+## Tracking the Landscape
+
+Keep tabs on competitors, upstream projects, and what your team shipped.
 
 ### Competitive Watch (ai-bu-competitive-watch)
 
@@ -198,40 +317,18 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 | `/shipped-metrics` | Analyze repo activity metrics |
 | `/shipped-compare` | Compare what shipped across multiple repos |
 
----
-
-## Research and Review
-
-### Speed Reader (ai-bu-speed-reader)
-
-| Command | Description |
-|---------|-------------|
-| `/speedread` | Full summary of a long document or web page |
-| `/speedread-verdict` | Quick "read it or skip it" assessment |
-| `/speedread-bullets` | The fastest possible summary, just the signal |
-| `/speedread-extract` | Pull every concrete fact and number |
-| `/speedread-eli5` | Explain so a non-technical person understands |
-| `/speedread-annotate` | Annotated version with inline commentary |
-| `/speedread-compare` | Compare two documents side by side |
-| `/speedread-questions` | Generate the questions a peer reviewer would ask |
-| `/speedread-chain` | Map intellectual lineage and related work |
-
-### Persona Reviews (ai-bu-review-as-persona)
-
-| Command | Description |
-|---------|-------------|
-| `/review-as` | Get feedback from any persona you describe |
-| `/review-for-audience` | Simulate a custom audience reading your content |
-| `/review-multi` | Run multiple personas on the same content |
-| `/red-team` | Adversarial review to find weaknesses |
-| `/debate` | Stage a two-persona debate about your content |
-| `/persona-builder` | Build a detailed persona for repeated use |
-| `/empathy-map` | Create a UX empathy map for a persona |
-| `/rewrite-for` | Rewrite content as a specific persona would write it |
+```bash
+# Competitive intelligence
+claude /whats-new           # What just shipped
+claude /landscape           # Map the space
+claude /battlecard          # Prep for a sales call
+```
 
 ---
 
-## Engineering Tools
+## Engineering Workflows
+
+Code review, repo exploration, sprint ceremonies, and demos.
 
 ### Code and Repo (ai-bu-claude-commands)
 
@@ -251,68 +348,6 @@ Every slash command across all 17 tools, organized by workflow. 100+ commands at
 |---------|-------------|
 | `/compose-template` | Create a new CLAUDE.md template for your project |
 | `/suggest-template` | Get a suggested CLAUDE.md based on your repo |
-
----
-
-## Power User Patterns
-
-### Morning routine
-```bash
-claude /briefing            # What happened overnight
-claude /risk-radar          # Anything on fire?
-```
-
-### Before sending any message
-```bash
-claude /polish "your draft"
-claude /style-check "the polished version"
-```
-
-### Friday status update pipeline
-```bash
-claude /status-report       # Generate from Git history
-claude /polish "..."        # Tighten the language
-claude /style-check "..."   # Final quality pass
-```
-
-### Meeting workflow
-```bash
-claude /pre-brief           # Prepare before the meeting
-# ... attend the meeting ...
-claude /meeting-notes       # Structure your raw notes
-claude /action-items        # Extract every action item
-claude /meeting-email       # Draft the follow-up email
-```
-
-### Content creation pipeline
-```bash
-claude /cfp                 # Draft the proposal
-claude /cfp-reviewer        # Simulate a reviewer scoring it
-claude /cfp-variants        # Try different angles
-```
-
-### Presentation workflow
-```bash
-claude /slides              # Build the outline
-claude /slide-hooks         # Nail the opening
-claude /slide-pacing        # Check the timing
-claude /slide-review        # Get honest feedback
-claude /slide-to-marp       # Convert to Marp for rendering
-```
-
-### Research workflow
-```bash
-claude /speedread doc.pdf   # Get the summary
-claude /speedread-extract   # Pull the facts
-claude /speedread-verdict   # Worth the full read?
-```
-
-### Competitive intelligence
-```bash
-claude /whats-new           # What just shipped
-claude /landscape           # Map the space
-claude /battlecard          # Prep for a sales call
-```
 
 ---
 
@@ -336,7 +371,7 @@ claude /battlecard          # Prep for a sales call
 
 | Path | Contents |
 |------|----------|
-| `~/.claude/commands/` | Installed slash command files (100+) |
+| `~/.claude/commands/` | Installed slash command files (130+) |
 | `~/.ai-bu-hub/` | Cloned Hub repo sources (17 repos) |
 | `~/.claude/settings.json` | MCP server configuration |
 | `~/.ai-bu-hub/.backups/` | Backup snapshots from updates |

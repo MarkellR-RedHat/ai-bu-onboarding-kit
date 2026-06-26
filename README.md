@@ -1,28 +1,39 @@
-# AI BU Onboarding Kit
+# AI BU Hub
 
-One command. Under 3 minutes. 100+ slash commands for Claude Code.
-
-This is the setup kit for the AI BU Hub tool suite. It clones 17 tool repos, installs every slash command, configures MCP servers, and gets you fully operational. Run it once and you are configured like the rest of the team.
-
-## Quick Start
+130+ productivity commands for the Red Hat AI BU. One command to install them all.
 
 ```bash
 git clone https://github.com/MarkellR-RedHat/ai-bu-onboarding-kit.git
 cd ai-bu-onboarding-kit
-chmod +x setup.sh
 ./setup.sh
 ```
 
-That is the whole process. The setup script handles everything:
+## What you get in 5 commands
 
-1. Detects your OS and checks prerequisites
-2. Clones all 17 Hub tool repos
-3. Installs 100+ slash commands into Claude Code
-4. Configures MCP servers (GitHub, Fetch)
-5. Optionally sets up git productivity aliases
-6. Shows a summary dashboard of everything installed
+```
+$ claude /read-the-room
+→ Paste any message. Get back what is really being said, the emotional tone,
+  and a suggested response strategy.
 
-### Setup Modes
+$ claude /briefing
+→ Morning GitHub summary: PRs to review, PRs waiting on you, recent mentions,
+  and a prioritized list of what to tackle first.
+
+$ claude /polish "rough draft of your message here"
+→ Same meaning, tighter language, more professional. Your voice stays intact.
+
+$ claude /status-report
+→ Weekly status report pulled from your Git commits and merged PRs. No more
+  Friday afternoon scrambling.
+
+$ claude /speedread https://arxiv.org/abs/some-paper
+→ One-paragraph summary, key findings, and a "read it or skip it" verdict
+  in under 10 seconds.
+```
+
+That is 5 of the 130+ commands. See the [full cheatsheet](commands-cheatsheet.md) for the rest.
+
+## Setup modes
 
 ```bash
 ./setup.sh              # Full install, all 17 tools
@@ -32,73 +43,44 @@ That is the whole process. The setup script handles everything:
 ./setup.sh --yes        # Skip prompts, accept all defaults
 ```
 
-## What You Get
-
-17 specialized tools, 100+ slash commands, organized by workflow:
-
-```
-DAILY WORKFLOW                    COMMUNICATION
-  /briefing                         /polish
-  /standup                          /shorten
-  /catch-me-up                      /tone-shift
-  /risk-radar                       /read-the-room
-  /status-report                    /bad-news
-  /executive-summary                /decline-politely
-                                    /escalation
-MEETINGS                           /follow-up
-  /meeting-notes
-  /action-items                   STYLE AND QUALITY
-  /pre-brief                       /style-check
-  /meeting-cancel                   /style-fix
-  /decision-log                     /style-score
-  /raci                             /tone-check
-
-CONTENT CREATION                  INTELLIGENCE
-  /cfp                              /whats-new
-  /slides                           /landscape
-  /blog-from-pr                     /upstream
-  /draft-announcement               /shipped
-  /write-docs                       /battlecard
-
-RESEARCH                          ENGINEERING
-  /speedread                        /tldr-repo
-  /speedread-verdict                /what-next
-  /speedread-extract                /retro
-  /review-as                        /demo-prep
-  /red-team                         /release-notes
-```
-
-See [commands-cheatsheet.md](commands-cheatsheet.md) for the full reference with descriptions.
-
 ## What the setup installs
+
+The setup script handles everything in one pass:
+
+1. Detects your OS and checks prerequisites
+2. Clones all 17 Hub tool repos
+3. Registers 130+ slash commands into Claude Code
+4. Configures MCP servers (GitHub, Fetch)
+5. Optionally sets up git productivity aliases
+6. Shows a summary of everything installed
 
 ```
 ~/.claude/
-  commands/                  Slash commands (100+ .md files)
-    briefing.md                /briefing - daily GitHub summary
-    polish.md                  /polish - clean up rough drafts
-    style-check.md             /style-check - Red Hat writing style
-    status-report.md           /status-report - weekly status report
-    read-the-room.md           /read-the-room - decode messages
-    speedread.md               /speedread - summarize documents
-    ...                        (90+ more commands)
+  commands/                  Slash commands (130+ .md files)
+    briefing.md                /briefing
+    polish.md                  /polish
+    style-check.md             /style-check
+    status-report.md           /status-report
+    read-the-room.md           /read-the-room
+    speedread.md               /speedread
+    ...                        (120+ more)
   settings.json              MCP server config (GitHub, Fetch)
 
 ~/.ai-bu-hub/                Source repos (cloned from GitHub)
-  ai-bu-claude-commands/       12 core engineering commands
-  ai-bu-daily-briefing/         7 daily workflow commands
-  ai-bu-meeting-notes/         10 meeting commands
-  ai-bu-status-report/          6 reporting commands
-  ai-bu-message-polisher/      10 communication commands
-  ai-bu-style-checker/          8 style and tone commands
-  ai-bu-review-as-persona/      8 persona review commands
-  ai-bu-cfp-generator/          9 conference proposal commands
-  ai-bu-slide-outliner/         9 presentation commands
-  ai-bu-speed-reader/           9 research commands
-  ai-bu-competitive-watch/      9 competitive intel commands
-  ai-bu-upstream-tracker/        5 upstream tracking commands
-  ai-bu-shipped-digest/         6 shipping digest commands
-  ai-bu-claude-md-templates/     2 template commands
+  ai-bu-claude-commands/       Core engineering commands
+  ai-bu-daily-briefing/        Daily workflow commands
+  ai-bu-meeting-notes/         Meeting commands
+  ai-bu-message-polisher/      Communication commands
+  ai-bu-style-checker/         Style and tone commands
+  ai-bu-status-report/         Reporting commands
+  ai-bu-review-as-persona/     Persona review commands
+  ai-bu-cfp-generator/         Conference proposal commands
+  ai-bu-slide-outliner/        Presentation commands
+  ai-bu-speed-reader/          Research commands
+  ai-bu-competitive-watch/     Competitive intel commands
+  ai-bu-upstream-tracker/      Upstream tracking commands
+  ai-bu-shipped-digest/        Shipping digest commands
+  ai-bu-claude-md-templates/   Template commands
   ai-bu-prompt-library/        Reusable prompt templates
   ai-bu-git-productivity/      Git aliases and shortcuts
   ai-bu-mcp-server-kit/        MCP server configurations
@@ -114,68 +96,9 @@ See [commands-cheatsheet.md](commands-cheatsheet.md) for the full reference with
 - [GitHub CLI (gh)](https://cli.github.com/) installed and authenticated
 - Node.js 18+ (for MCP servers)
 
-## Verify Your Setup
+## After setup
 
-Run the health check dashboard to confirm everything is working:
-
-```bash
-./verify.sh
-```
-
-You will see a full diagnostic with pass/fail status for every component, a health score, and specific fix instructions for any issues:
-
-```
-  AI BU Hub -- Health Check Dashboard
-
-  Prerequisites
-  --------------------------------------------------
-  PASS  Claude Code                          v1.0.31
-  PASS  git                                  2.45.0
-  PASS  GitHub CLI (gh)                      2.54.0
-  PASS  Node.js                              v22.4.0
-
-  Hub Repos (17 expected)
-  --------------------------------------------------
-  PASS  ai-bu-claude-commands                12 commands
-  PASS  ai-bu-daily-briefing                 7 commands
-  ...
-
-  =====================================================
-    Health Check Results
-  =====================================================
-
-  Health: ██████████████████████████████  100%
-
-  [OK] ALL SYSTEMS GO
-```
-
-## Update
-
-Pull the latest versions of everything:
-
-```bash
-./update.sh
-```
-
-The update script shows what changed since your last update: new commands added, existing commands modified, and repos with new commits. It backs up your current commands before making changes.
-
-```bash
-./update.sh --diff    # Also show line-by-line diffs of changed commands
-```
-
-## Uninstall
-
-Remove all AI BU Hub commands, repos, and configuration:
-
-```bash
-./uninstall.sh
-```
-
-This only removes what setup installed. Claude Code itself is not touched.
-
-## After Setup
-
-Start here: [first-steps.md](first-steps.md) is a 10-minute walkthrough that builds step by step, starting with the most impressive commands and working toward power-user workflows.
+Start here: [first-steps.md](first-steps.md) walks you through the most impressive commands in 10 minutes.
 
 **The commands you will reach for most:**
 
@@ -199,7 +122,30 @@ Start here: [first-steps.md](first-steps.md) is a 10-minute walkthrough that bui
 | `/speedread-verdict` | "Read it or skip it" in 10 seconds |
 | `/what-next` | Figures out the highest-impact thing to work on |
 
-## Project Structure
+## Verify your setup
+
+```bash
+./verify.sh
+```
+
+You will see a full diagnostic with pass/fail status for every component, a health score, and specific fix instructions for any issues.
+
+## Update
+
+```bash
+./update.sh           # Pull the latest versions of everything
+./update.sh --diff    # Also show line-by-line diffs of changed commands
+```
+
+## Uninstall
+
+```bash
+./uninstall.sh
+```
+
+Removes all AI BU Hub commands, repos, and configuration. Claude Code itself is not touched.
+
+## Project structure
 
 ```
 ai-bu-onboarding-kit/
@@ -208,7 +154,7 @@ ai-bu-onboarding-kit/
   update.sh                Pull latest versions
   uninstall.sh             Clean removal
   first-steps.md           10-minute guided walkthrough
-  commands-cheatsheet.md   Full command reference (100+ commands)
+  commands-cheatsheet.md   Full command reference (130+ commands)
   README.md                This file
 ```
 

@@ -3,7 +3,7 @@ set -uo pipefail
 
 # ============================================================================
 #  AI BU Hub - One-Command Setup
-#  From zero to fully-equipped in under 3 minutes.
+#  Setting up your AI BU toolkit.
 #
 #  Usage:
 #    ./setup.sh              Full install (all 17 tools)
@@ -18,29 +18,29 @@ COMMANDS_DIR="$HOME/.claude/commands"
 CLONE_DIR="$HOME/.ai-bu-hub"
 MCP_CONFIG="$HOME/.claude/settings.json"
 BACKUP_DIR="$HOME/.ai-bu-hub/.backups/$(date +%Y%m%d-%H%M%S)"
-VERSION="2.0.0"
+VERSION="2.1.0"
 START_TIME=$(date +%s)
 
 # All AI BU Hub repos with descriptions
 declare -A REPO_DESC
 REPO_DESC=(
-  [ai-bu-claude-commands]="Core slash command collection"
-  [ai-bu-mcp-server-kit]="MCP server configurations"
+  [ai-bu-claude-commands]="Core slash commands for engineering workflows"
+  [ai-bu-mcp-server-kit]="MCP server configs (GitHub, Fetch, and more)"
   [ai-bu-claude-md-templates]="CLAUDE.md project templates"
-  [ai-bu-daily-briefing]="Daily GitHub activity briefing"
-  [ai-bu-meeting-notes]="Meeting notes structuring"
-  [ai-bu-status-report]="Weekly status report generator"
-  [ai-bu-review-as-persona]="Persona-based content review"
-  [ai-bu-style-checker]="Red Hat writing style checker"
-  [ai-bu-cfp-generator]="Conference talk proposal drafts"
-  [ai-bu-slide-outliner]="Slide deck outliner"
+  [ai-bu-daily-briefing]="Morning briefing and daily activity summaries"
+  [ai-bu-meeting-notes]="Meeting notes, agendas, and action items"
+  [ai-bu-status-report]="Weekly status reports from your Git history"
+  [ai-bu-review-as-persona]="Get feedback from any persona you describe"
+  [ai-bu-style-checker]="Red Hat writing style checker and auto-fixer"
+  [ai-bu-cfp-generator]="Conference talk proposal drafts and review"
+  [ai-bu-slide-outliner]="Presentation outlines and speaker notes"
   [ai-bu-prompt-library]="Reusable prompt templates"
   [ai-bu-git-productivity]="Git aliases and shortcuts"
-  [ai-bu-message-polisher]="Message and email polisher"
-  [ai-bu-competitive-watch]="Competitor activity tracker"
-  [ai-bu-upstream-tracker]="Upstream project monitor"
-  [ai-bu-shipped-digest]="Recent shipments digest"
-  [ai-bu-speed-reader]="Long document summarizer"
+  [ai-bu-message-polisher]="Polish emails, Slack messages, and PR descriptions"
+  [ai-bu-competitive-watch]="Competitive intelligence and battlecards"
+  [ai-bu-upstream-tracker]="Upstream project change monitoring"
+  [ai-bu-shipped-digest]="Team shipping digest and release notes"
+  [ai-bu-speed-reader]="Summarize any long document in seconds"
 )
 
 ALL_REPOS=(
@@ -172,8 +172,6 @@ term_width() {
 # ASCII art header
 # -------------------------------------------------------
 show_header() {
-  local w
-  w=$(term_width)
   echo ""
   echo -e "${CYAN}${BOLD}"
   cat << 'ASCIIEOF'
@@ -184,12 +182,11 @@ show_header() {
  /_/   \_\___| |____/ \___/  |_| |_|\__,_|_.__/
 ASCIIEOF
   echo -e "${NC}"
-  echo -e "  ${BOLD}One-Command Setup${NC}  ${DIM}v${VERSION}${NC}"
-  echo -e "  ${DIM}From zero to fully-equipped in under 3 minutes${NC}"
+  echo -e "  ${BOLD}Setting up your AI BU toolkit${NC}  ${DIM}v${VERSION}${NC}"
   echo ""
 
   if $DRY_RUN; then
-    echo -e "  ${YELLOW}${BOLD}DRY RUN${NC} ${DIM}-- nothing will be changed${NC}"
+    echo -e "  ${YELLOW}${BOLD}DRY RUN${NC} ${DIM}-- preview only, nothing will be changed${NC}"
     echo ""
   fi
 }
@@ -363,7 +360,7 @@ check_prerequisites() {
       warnings=$((warnings + 1))
     fi
   else
-    warn "GitHub CLI (gh) not installed -- some features will be limited"
+    warn "GitHub CLI (gh) not installed. Some features will be limited."
     info "Install: $(install_hint gh)"
     warnings=$((warnings + 1))
   fi
@@ -372,7 +369,7 @@ check_prerequisites() {
   if command -v node &>/dev/null; then
     success "Node.js ${DIM}$(node --version)${NC}"
   else
-    warn "Node.js not installed -- MCP servers will be skipped"
+    warn "Node.js not installed. MCP servers will be skipped."
     info "Install: $(install_hint node)"
     warnings=$((warnings + 1))
   fi
@@ -393,7 +390,7 @@ check_prerequisites() {
     exit 1
   fi
   if [[ $warnings -gt 0 ]]; then
-    info "${YELLOW}${warnings} optional tool(s) missing${NC} -- setup will continue with reduced features"
+    info "${YELLOW}${warnings} optional tool(s) missing.${NC} Setup will continue with reduced features."
   else
     success "${GREEN}All prerequisites met${NC}"
   fi
@@ -515,23 +512,29 @@ select_repos() {
 sync_repos() {
   local mode_label
   if $MINIMAL; then
-    mode_label="minimal (${#REPOS[@]} repos)"
+    mode_label="minimal (${#REPOS[@]} tools)"
   elif $PICK; then
-    mode_label="custom (${#REPOS[@]} repos)"
+    mode_label="custom (${#REPOS[@]} tools)"
   else
-    mode_label="full (${#REPOS[@]} repos)"
+    mode_label="full (${#REPOS[@]} tools)"
   fi
 
-  step "Syncing AI BU Hub repos -- ${mode_label}"
+  step "Installing tools / ${mode_label}"
   show_eta
+
+  # Quick connectivity check
+  if ! git ls-remote --exit-code "https://github.com/$GITHUB_ORG/ai-bu-claude-commands.git" HEAD &>/dev/null 2>&1; then
+    fail "Can't reach GitHub right now. Check your internet connection and try again in a minute."
+    exit 1
+  fi
 
   if $DRY_RUN; then
     for repo in "${REPOS[@]}"; do
       local repo_dir="$CLONE_DIR/$repo"
       if [[ -d "$repo_dir/.git" ]]; then
-        info "Would update: $repo ${DIM}${REPO_DESC[$repo]:-}${NC}"
+        info "Would update: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
       else
-        info "Would clone:  $repo ${DIM}${REPO_DESC[$repo]:-}${NC}"
+        info "Would install: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
       fi
     done
     return
@@ -544,37 +547,46 @@ sync_repos() {
     current=$((current + 1))
     local repo_dir="$CLONE_DIR/$repo"
     local desc="${REPO_DESC[$repo]:-}"
+    local progress="${DIM}(${current}/${total})${NC}"
 
     if [[ -d "$repo_dir/.git" ]]; then
       if git -C "$repo_dir" pull --quiet 2>/dev/null; then
-        success "${repo} ${DIM}updated${NC}  ${DIM}(${current}/${total})${NC}"
+        success "${BOLD}${repo}${NC} ${DIM}updated${NC}  ${progress}"
         REPOS_UPDATED=$((REPOS_UPDATED + 1))
       else
-        warn "${repo} ${DIM}update failed, using existing${NC}  ${DIM}(${current}/${total})${NC}"
-        FAILED_REPOS+=("$repo (update failed)")
+        warn "${repo} could not update. Using existing version.  ${progress}"
+        FAILED_REPOS+=("$repo")
         REPOS_FAILED=$((REPOS_FAILED + 1))
       fi
     else
       if git clone --quiet "https://github.com/$GITHUB_ORG/$repo.git" "$repo_dir" 2>/dev/null; then
-        success "${repo} ${DIM}cloned${NC}  ${DIM}(${current}/${total})${NC}"
+        success "${BOLD}${repo}${NC}  ${DIM}${desc}${NC}  ${progress}"
         REPOS_CLONED=$((REPOS_CLONED + 1))
       else
-        warn "${repo} ${DIM}clone failed${NC}  ${DIM}(${current}/${total})${NC}"
-        FAILED_REPOS+=("$repo (clone failed)")
+        warn "${repo} could not be cloned. Skipping for now.  ${progress}"
+        FAILED_REPOS+=("$repo")
         REPOS_FAILED=$((REPOS_FAILED + 1))
       fi
     fi
   done
 
   echo ""
-  info "Repos: ${GREEN}${REPOS_CLONED} cloned${NC}, ${GREEN}${REPOS_UPDATED} updated${NC}, ${YELLOW}${REPOS_FAILED} skipped${NC}"
+  if [[ $REPOS_CLONED -gt 0 ]]; then
+    info "${GREEN}${REPOS_CLONED} installed${NC}"
+  fi
+  if [[ $REPOS_UPDATED -gt 0 ]]; then
+    info "${GREEN}${REPOS_UPDATED} updated${NC}"
+  fi
+  if [[ $REPOS_FAILED -gt 0 ]]; then
+    info "${YELLOW}${REPOS_FAILED} skipped${NC} (run setup again later to retry)"
+  fi
 }
 
 # -------------------------------------------------------
 # 4. Install slash commands
 # -------------------------------------------------------
 install_commands() {
-  step "Installing slash commands"
+  step "Registering slash commands"
   show_eta
 
   # Files to skip (not commands)
@@ -592,12 +604,12 @@ install_commands() {
         [[ "$skip_files" == *"$filename"* ]] && continue
         local cmd_name
         cmd_name=$(echo "$filename" | sed 's/\.md$//')
-        info "Would install: /${cmd_name}"
+        info "Would register: /${cmd_name}"
         would_install=$((would_install + 1))
       done
     done
     echo ""
-    info "Total: $would_install commands would be installed"
+    info "Total: $would_install commands would be registered"
     return
   fi
 
@@ -627,7 +639,7 @@ install_commands() {
   done
 
   if [[ $COMMANDS_INSTALLED -gt 0 ]]; then
-    success "Installed ${GREEN}${COMMANDS_INSTALLED}${NC} slash commands to ${DIM}$COMMANDS_DIR${NC}"
+    success "Registered ${GREEN}${COMMANDS_INSTALLED}${NC} slash commands into ${DIM}$COMMANDS_DIR${NC}"
   else
     warn "No commands found to install"
   fi
@@ -660,8 +672,8 @@ setup_mcp_servers() {
   show_eta
 
   if ! command -v node &>/dev/null; then
-    warn "Node.js not available -- skipping MCP server setup"
-    info "Install Node.js and run setup again to enable MCP servers"
+    warn "Node.js not available. Skipping MCP server setup."
+    info "Install Node.js and run setup again to enable MCP servers."
     return
   fi
 
@@ -733,8 +745,8 @@ setup_mcp_servers() {
     fi
     MCP_CONFIGURED=true
   else
-    warn "Could not configure MCP servers automatically"
-    info "See ai-bu-mcp-server-kit repo for manual setup"
+    warn "Could not configure MCP servers automatically."
+    info "See ai-bu-mcp-server-kit repo for manual setup."
   fi
   rm -f "$tmp_config"
 }
@@ -799,21 +811,19 @@ print_summary() {
     return
   fi
 
-  # Summary box
-  echo -e "  ${CYAN}${BOLD}=====================================================${NC}"
-  echo -e "  ${CYAN}${BOLD}  SETUP COMPLETE${NC}"
-  echo -e "  ${CYAN}${BOLD}=====================================================${NC}"
+  # Celebration header
+  echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
+  echo -e "  ${GREEN}${BOLD}  SETUP COMPLETE${NC}"
+  echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
+  echo ""
+  echo -e "  ${BOLD}You now have ${GREEN}${COMMANDS_INSTALLED}${NC}${BOLD} slash commands available in Claude Code.${NC}"
   echo ""
 
-  # Stats table
-  echo -e "  ${BOLD}Installation Summary${NC}"
+  # Stats
+  echo -e "  ${BOLD}What was installed${NC}"
   echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
-  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Slash commands installed" "$COMMANDS_INSTALLED"
-  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Repos cloned" "$REPOS_CLONED"
-  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Repos updated" "$REPOS_UPDATED"
-  if [[ $REPOS_FAILED -gt 0 ]]; then
-    printf "  %-30s ${YELLOW}${BOLD}%s${NC}\n" "Repos skipped" "$REPOS_FAILED"
-  fi
+  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Slash commands" "$COMMANDS_INSTALLED"
+  printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Tool repos" "$((REPOS_CLONED + REPOS_UPDATED))"
   if $MCP_CONFIGURED; then
     printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "MCP servers" "configured"
   fi
@@ -828,15 +838,15 @@ print_summary() {
   echo -e "  MCP config    ${DIM}$MCP_CONFIG${NC}"
   echo -e "  Backups       ${DIM}$BACKUP_DIR${NC}"
 
-  # Failures
+  # Failures (friendly, non-scary)
   if [[ ${#FAILED_REPOS[@]} -gt 0 ]]; then
     echo ""
-    echo -e "  ${YELLOW}${BOLD}Issues (non-blocking)${NC}"
+    echo -e "  ${YELLOW}${BOLD}Skipped (not blocking)${NC}"
     echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
     for f in "${FAILED_REPOS[@]}"; do
       echo -e "  ${WARN} $f"
     done
-    echo -e "  ${DIM}Run setup.sh again when online to retry.${NC}"
+    echo -e "  ${DIM}Run setup.sh again when you have a stable connection to retry.${NC}"
   fi
 
   if $MINIMAL; then
@@ -845,16 +855,23 @@ print_summary() {
     echo -e "  ${DIM}Run setup.sh --full or setup.sh --pick for more.${NC}"
   fi
 
+  # The big moment: try this first
   echo ""
-  echo -e "  ${BOLD}${GREEN}Ready to go. Try these first:${NC}"
+  echo -e "  ${BOLD}${GREEN}Try this first:${NC}"
   echo ""
-  echo -e "  ${CYAN}1${NC}  claude /briefing        ${DIM}Get your daily GitHub activity summary${NC}"
+  echo -e "    ${CYAN}claude /read-the-room${NC}"
+  echo -e "    ${DIM}Paste any Slack message or email and Claude decodes${NC}"
+  echo -e "    ${DIM}what is really being said underneath the surface.${NC}"
+  echo ""
+  echo -e "  ${BOLD}Then explore:${NC}"
+  echo ""
+  echo -e "  ${CYAN}1${NC}  claude /briefing        ${DIM}Your daily GitHub activity summary${NC}"
   echo -e "  ${CYAN}2${NC}  claude /polish          ${DIM}Clean up a rough email or message${NC}"
-  echo -e "  ${CYAN}3${NC}  claude /style-check     ${DIM}Check writing against Red Hat style${NC}"
-  echo -e "  ${CYAN}4${NC}  claude /status-report   ${DIM}Generate a weekly status report${NC}"
+  echo -e "  ${CYAN}3${NC}  claude /status-report   ${DIM}Generate a weekly status report from Git${NC}"
+  echo -e "  ${CYAN}4${NC}  claude /style-check     ${DIM}Check writing against Red Hat style${NC}"
   echo ""
-  echo -e "  ${DIM}For a guided walkthrough, see first-steps.md${NC}"
-  echo -e "  ${DIM}For all commands, see commands-cheatsheet.md${NC}"
+  echo -e "  ${DIM}Guided walkthrough:  first-steps.md${NC}"
+  echo -e "  ${DIM}Full command list:   commands-cheatsheet.md${NC}"
   echo ""
   echo -e "  ${BOLD}Management${NC}"
   echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
