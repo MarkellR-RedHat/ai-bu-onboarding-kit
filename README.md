@@ -1,8 +1,14 @@
-# AI BU Hub
+# Onboarding Kit
 
-**You spend half your week on work about work.** Status reports, meeting prep, email wordsmithing, catching up on PRs you missed, figuring out what changed upstream. The engineering is the easy part.
+Part of the [AI BU](https://github.com/MarkellR-RedHat/ai-bu-hub) tool suite.
+
+## You spend half your week on work about work.
+
+Status reports, meeting prep, email wordsmithing, catching up on PRs you missed, figuring out what changed upstream. The engineering is the easy part.
 
 AI BU Hub is 122 slash commands across 17 tools that plug directly into Claude Code. One script, one minute, zero configuration files to edit by hand.
+
+## Quick start
 
 ```bash
 git clone https://github.com/MarkellR-RedHat/ai-bu-onboarding-kit.git
@@ -10,9 +16,17 @@ cd ai-bu-onboarding-kit
 ./setup.sh
 ```
 
-That's it. Open Claude Code and type `/briefing` to see it work.
+Open Claude Code and type `/briefing` to see it work.
 
----
+## Before and after
+
+| | Before | After |
+|---|--------|-------|
+| **Morning triage** | Open GitHub, scan notifications across 4 tabs, forget the urgent one | `/briefing` shows everything prioritized on one screen |
+| **Status report** | Friday 4 PM: reconstruct the week from memory and commit logs | `/status-report` pulls it from Git history in 10 seconds |
+| **Rough email** | Rewrite the same two sentences for 8 minutes, send the first version | `/polish` returns a clean version in 3 seconds |
+| **30-page PDF** | Skim for 20 minutes, retain maybe 40% | `/speedread` gives you key findings and a read-or-skip verdict |
+| **Conference CFP** | Stare at a blank abstract for an hour | `/cfp` drafts it, `/cfp-reviewer` stress-tests it, `/cfp-variants` gives you three angles |
 
 ## What you get
 
@@ -36,9 +50,7 @@ That's it. Open Claude Code and type `/briefing` to see it work.
 | **MCP servers** | - | GitHub and Fetch servers configured automatically |
 | **Prompt library** | 16 | Reusable prompt templates for common patterns |
 
-**17 tools. 122 commands. All registered in Claude Code as slash commands.**
-
----
+17 tools. 122 commands. All registered in Claude Code as slash commands.
 
 ## Five to try right now
 
@@ -66,9 +78,33 @@ $ claude /speedread https://arxiv.org/abs/some-paper
 
 Full command reference: [commands-cheatsheet.md](commands-cheatsheet.md)
 
----
+## Workflow: from shipped code to conference stage
 
-## Setup modes
+Most tools work on their own, but they chain together. This is the workflow the team actually uses when someone ships something worth talking about.
+
+```bash
+# 1. Summarize what shipped
+claude /shipped
+
+# 2. Turn the interesting PR into a blog post
+claude /blog-from-pr https://github.com/org/repo/pull/42
+
+# 3. Convert the blog post into a CFP abstract
+claude /cfp-from-blog "<paste blog post>"
+
+# 4. Stress-test it before submitting
+claude /cfp-reviewer "<paste proposal>"
+
+# 5. Build the slide deck
+claude /slides "<paste the CFP abstract>"
+
+# 6. Generate speaker notes as cue cards, not scripts
+claude /slide-notes "<paste slide outline>"
+```
+
+Total wall-clock time from merged PR to submitted CFP: about 25 minutes. Without this pipeline, that same work takes most of a day and usually does not happen at all.
+
+## Setup options
 
 ```bash
 ./setup.sh              # Full install, all 17 tools
@@ -99,8 +135,6 @@ In one pass:
 - [GitHub CLI (gh)](https://cli.github.com/) installed and authenticated
 - Node.js 18+ (for MCP servers)
 
----
-
 ## After setup
 
 Run [first-steps.md](first-steps.md) for a 10-minute guided walkthrough of the most useful commands.
@@ -116,7 +150,7 @@ Run [first-steps.md](first-steps.md) for a 10-minute guided walkthrough of the m
 | `/speedread` | Summarize any long document |
 | `/style-check` | Check writing against Red Hat style |
 
-### Worth trying
+### Worth exploring
 
 | Command | What it does |
 |---------|-------------|
@@ -127,8 +161,6 @@ Run [first-steps.md](first-steps.md) for a 10-minute guided walkthrough of the m
 | `/speedread-verdict` | "Read it or skip it" in 10 seconds |
 | `/what-next` | Identify the highest-impact thing to work on next |
 
----
-
 ## Verify, update, uninstall
 
 ```bash
@@ -137,8 +169,6 @@ Run [first-steps.md](first-steps.md) for a 10-minute guided walkthrough of the m
 ./update.sh --diff      # Pull and show what changed
 ./uninstall.sh          # Clean removal (Claude Code itself is not touched)
 ```
-
----
 
 ## File layout
 

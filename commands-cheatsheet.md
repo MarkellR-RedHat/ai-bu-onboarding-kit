@@ -506,4 +506,4 @@ For a full diagnostic, run `./verify.sh`. It checks every component and suggests
 
 ---
 
-*Bookmark this file. You will use it more than you expect.*
+Bookmark this file. You will use it more than you expect.
