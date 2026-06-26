@@ -1,6 +1,6 @@
 # AI BU Hub
 
-130+ productivity commands for the Red Hat AI BU. One command to install them all.
+130+ slash commands for Red Hat AI BU engineering workflows. One script installs everything.
 
 ```bash
 git clone https://github.com/MarkellR-RedHat/ai-bu-onboarding-kit.git
@@ -8,7 +8,7 @@ cd ai-bu-onboarding-kit
 ./setup.sh
 ```
 
-## What you get in 5 commands
+## Five examples
 
 ```
 $ claude /read-the-room
@@ -31,7 +31,7 @@ $ claude /speedread https://arxiv.org/abs/some-paper
   in under 10 seconds.
 ```
 
-That is 5 of the 130+ commands. See the [full cheatsheet](commands-cheatsheet.md) for the rest.
+5 of 130+. See [commands-cheatsheet.md](commands-cheatsheet.md) for the full list.
 
 ## Setup modes
 
@@ -43,9 +43,9 @@ That is 5 of the 130+ commands. See the [full cheatsheet](commands-cheatsheet.md
 ./setup.sh --yes        # Skip prompts, accept all defaults
 ```
 
-## What the setup installs
+## What setup.sh does
 
-The setup script handles everything in one pass:
+In one pass, it:
 
 1. Detects your OS and checks prerequisites
 2. Clones all 17 Hub tool repos
@@ -98,9 +98,9 @@ The setup script handles everything in one pass:
 
 ## After setup
 
-Start here: [first-steps.md](first-steps.md) walks you through the most impressive commands in 10 minutes.
+[first-steps.md](first-steps.md) walks through the most useful commands in 10 minutes.
 
-**The commands you will reach for most:**
+**Most-used commands:**
 
 | Command | What it does |
 |---------|-------------|
@@ -111,16 +111,16 @@ Start here: [first-steps.md](first-steps.md) walks you through the most impressi
 | `/speedread` | Summarize any long document |
 | `/style-check` | Check writing against Red Hat style |
 
-**The commands that will surprise you:**
+**Worth trying:**
 
 | Command | What it does |
 |---------|-------------|
-| `/meeting-cancel` | Assesses if a meeting should be an email |
-| `/cfp-reviewer` | Simulates a CFP reviewer scoring your proposal |
-| `/slide-hooks` | Generates opening hooks for a presentation |
-| `/red-team` | Adversarial review to find weaknesses |
+| `/meeting-cancel` | Decide if a meeting should be an email |
+| `/cfp-reviewer` | Simulate a CFP reviewer scoring your proposal |
+| `/slide-hooks` | Generate opening hooks for a presentation |
+| `/red-team` | Adversarial review to find weaknesses in your content |
 | `/speedread-verdict` | "Read it or skip it" in 10 seconds |
-| `/what-next` | Figures out the highest-impact thing to work on |
+| `/what-next` | Identify the highest-impact thing to work on next |
 
 ## Verify your setup
 
@@ -128,13 +128,13 @@ Start here: [first-steps.md](first-steps.md) walks you through the most impressi
 ./verify.sh
 ```
 
-You will see a full diagnostic with pass/fail status for every component, a health score, and specific fix instructions for any issues.
+Shows pass/fail for every component, a health score, and fix instructions for any issues.
 
 ## Update
 
 ```bash
-./update.sh           # Pull the latest versions of everything
-./update.sh --diff    # Also show line-by-line diffs of changed commands
+./update.sh           # Pull latest versions
+./update.sh --diff    # Pull and show what changed
 ```
 
 ## Uninstall
@@ -160,9 +160,7 @@ ai-bu-onboarding-kit/
 
 ## Contributing
 
-Found a bug or want to improve something? Open an issue or submit a PR on this repo.
-
-To add a new tool to the onboarding kit, add its repo name to the `ALL_REPOS` array in `setup.sh`.
+Open an issue or submit a PR. To add a new tool, add its repo name to the `ALL_REPOS` array in `setup.sh`.
 
 ## License
 

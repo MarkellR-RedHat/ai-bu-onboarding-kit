@@ -1,6 +1,6 @@
-# Your First 10 Minutes with AI BU Hub
+# First 10 Minutes with AI BU Hub
 
-Setup is done. Everything is installed. This walkthrough is your product tour: six steps, each one building on the last, each one showing you something that saves real time. Start at the top and work your way down.
+Setup is done. Six things to try, each one useful on its own. Work top to bottom or jump to whatever looks relevant.
 
 Slash commands are global. You can run them from any directory.
 
@@ -8,7 +8,7 @@ Slash commands are global. You can run them from any directory.
 
 ## Step 1: Decode a message (30 seconds)
 
-This is the one that makes people say "whoa." The `/read-the-room` command takes any message someone sent you and breaks down what is actually going on underneath the words.
+`/read-the-room` takes any message and breaks down what is actually going on underneath the words.
 
 ```bash
 claude /read-the-room
@@ -31,13 +31,13 @@ what is on track before addressing delays. Propose a specific
 date rather than a vague "let's chat."
 ```
 
-**When to use it:** Before responding to anything that feels loaded, political, or unclear. It takes 30 seconds and can save you from a 30-minute misunderstanding.
+**When to use it:** Before responding to anything that feels loaded, political, or unclear.
 
 ---
 
 ## Step 2: Polish a rough message (1 minute)
 
-You have something to send but it reads like a first draft. The `/polish` command tightens your writing without adding corporate fluff. Your voice stays intact.
+`/polish` tightens your writing without adding corporate fluff. Your voice stays intact.
 
 ```bash
 claude /polish "hey team, wanted to let u know that the thing we talked about last week is done, the PR is up and i think we should merge it soon before the other changes land"
@@ -51,15 +51,15 @@ and ready for review. I recommend we merge before the upcoming
 changes land.
 ```
 
-Same meaning, tighter language, more professional. Try it on a real message you need to send today.
+Same meaning, tighter language, more professional.
 
-**When to use it:** Before sending emails, Slack messages, or PR descriptions. Especially when you are writing fast and want it to land well.
+**When to use it:** Before sending emails, Slack messages, or PR descriptions.
 
 ---
 
 ## Step 3: Get your daily briefing (2 minutes)
 
-The `/briefing` command pulls your GitHub activity and gives you a structured morning summary. No more opening 15 tabs to figure out what needs your attention.
+`/briefing` pulls your GitHub activity into a structured morning summary.
 
 ```bash
 claude /briefing
@@ -90,13 +90,13 @@ Suggested priorities:
 
 If you see "no GitHub activity found," make sure `gh auth status` shows you are authenticated.
 
-**When to use it:** Every morning, first thing. It replaces 10 minutes of GitHub tab-hopping.
+**When to use it:** Every morning, first thing.
 
 ---
 
 ## Step 4: Check your writing style (2 minutes)
 
-The `/style-check` command reviews content against Red Hat writing guidelines. It catches the habits you stop noticing after a while.
+`/style-check` reviews content against Red Hat writing guidelines.
 
 Create a quick test file:
 
@@ -135,15 +135,13 @@ Score: 4/10
 6 issues found. Run /style-fix to auto-correct.
 ```
 
-Each finding includes the line, the issue, and a concrete fix.
-
-**When to use it:** Before publishing blog posts, docs, or anything external-facing. Run `/style-fix` to let Claude auto-correct the issues.
+**When to use it:** Before publishing blog posts, docs, or anything external-facing. Run `/style-fix` to auto-correct.
 
 ---
 
 ## Step 5: Generate a status report (2 minutes)
 
-The `/status-report` command builds a weekly update from your Git commits and merged PRs. No more Friday afternoon scrambling to remember what you did.
+`/status-report` builds a weekly update from your Git commits and merged PRs.
 
 Navigate to a repo with recent commits:
 
@@ -181,7 +179,7 @@ If the report looks thin, make sure you are in a repo with recent activity.
 
 ## Step 6: Summarize a long document (1 minute)
 
-The `/speedread` command summarizes long documents so you can decide whether to commit the time to read the whole thing.
+`/speedread` summarizes long documents so you can decide whether to read the whole thing.
 
 ```bash
 claude /speedread https://some-long-technical-doc-url
@@ -213,13 +211,13 @@ Skip sections 4-6 (implementation details) unless you plan to
 contribute upstream.
 ```
 
-**Pro tip:** Use `/speedread-verdict` for a quick "read it or skip it" answer, or `/speedread-extract` to pull every concrete fact and number.
+Also try `/speedread-verdict` for a quick "read or skip" answer, or `/speedread-extract` to pull every fact and number.
 
 ---
 
-## The 5-minute challenge
+## Chaining commands
 
-Chain three commands to solve a real task. Scenario: you need to send your manager a polished end-of-week update.
+Three commands to go from raw Git history to a send-ready status update.
 
 **1. Generate the raw material:**
 ```bash
@@ -238,49 +236,45 @@ claude /polish "<paste your status report>"
 claude /style-check "<paste the polished version>"
 ```
 
-You just went from raw Git history to a send-ready status update in under 5 minutes.
-
 ---
 
-## What to explore next
+## More commands by category
 
-Now that you have the basics, here are the commands worth trying by category:
-
-### Communication power tools
+### Communication
 
 | Command | What it does |
 |---------|-------------|
-| `/shorten` | Cut a message to half its length without losing meaning |
-| `/tone-shift` | Rewrite a message in a different tone (formal, casual, urgent) |
-| `/bad-news` | Deliver bad news using the BIFF framework |
+| `/shorten` | Cut a message to half its length |
+| `/tone-shift` | Rewrite in a different tone (formal, casual, urgent) |
+| `/bad-news` | Deliver bad news using BIFF framework |
 | `/decline-politely` | Say no without burning bridges |
-| `/escalation` | Format an escalation email properly |
+| `/escalation` | Format an escalation email |
 
-### Meeting productivity
+### Meetings
 
 | Command | What it does |
 |---------|-------------|
 | `/meeting-notes` | Structure raw notes into decisions and action items |
-| `/pre-brief` | Prepare for a meeting by analyzing the agenda |
-| `/action-items` | Extract every action item from meeting notes |
-| `/meeting-cancel` | Assess whether a meeting should just be an email |
+| `/pre-brief` | Prep for a meeting from the agenda |
+| `/action-items` | Extract action items from notes |
+| `/meeting-cancel` | Decide if a meeting should be an email |
 
-### Content creation
+### Content
 
 | Command | What it does |
 |---------|-------------|
 | `/cfp` | Draft a conference talk proposal |
 | `/slides` | Build a presentation outline |
 | `/blog-from-pr` | Turn a PR into a blog post |
-| `/talk-to-blog` | Convert talk content to a blog post |
+| `/talk-to-blog` | Convert talk content into a blog post |
 
-### Intelligence and tracking
+### Tracking
 
 | Command | What it does |
 |---------|-------------|
-| `/whats-new` | See what competitors just shipped |
+| `/whats-new` | What competitors just shipped |
 | `/upstream` | Track upstream project changes |
-| `/shipped` | Summarize what your team shipped |
+| `/shipped` | What your team shipped recently |
 | `/landscape` | Map the competitive landscape |
 
 For the complete reference, see [commands-cheatsheet.md](commands-cheatsheet.md).

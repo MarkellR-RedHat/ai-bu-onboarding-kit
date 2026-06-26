@@ -3,7 +3,7 @@ set -uo pipefail
 
 # ============================================================================
 #  AI BU Hub - One-Command Setup
-#  Setting up your AI BU toolkit.
+#  Clones repos, installs slash commands, configures MCP servers.
 #
 #  Usage:
 #    ./setup.sh              Full install (all 17 tools)
@@ -130,7 +130,7 @@ for arg in "$@"; do
     --yes|-y)   YES_MODE=true ;;
     --help|-h)
       cat << 'HELPEOF'
-AI BU Hub Setup - One-command onboarding for the full tool suite
+AI BU Hub Setup - Installs repos, slash commands, and MCP servers
 
 Usage: ./setup.sh [OPTIONS]
 
@@ -182,7 +182,7 @@ show_header() {
  /_/   \_\___| |____/ \___/  |_| |_|\__,_|_.__/
 ASCIIEOF
   echo -e "${NC}"
-  echo -e "  ${BOLD}Setting up your AI BU toolkit${NC}  ${DIM}v${VERSION}${NC}"
+  echo -e "  ${BOLD}AI BU toolkit setup${NC}  ${DIM}v${VERSION}${NC}"
   echo ""
 
   if $DRY_RUN; then
@@ -811,16 +811,15 @@ print_summary() {
     return
   fi
 
-  # Celebration header
   echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
-  echo -e "  ${GREEN}${BOLD}  SETUP COMPLETE${NC}"
+  echo -e "  ${GREEN}${BOLD}  DONE${NC}"
   echo -e "  ${GREEN}${BOLD}=====================================================${NC}"
   echo ""
-  echo -e "  ${BOLD}You now have ${GREEN}${COMMANDS_INSTALLED}${NC}${BOLD} slash commands available in Claude Code.${NC}"
+  echo -e "  ${BOLD}${GREEN}${COMMANDS_INSTALLED}${NC}${BOLD} slash commands registered in Claude Code.${NC}"
   echo ""
 
   # Stats
-  echo -e "  ${BOLD}What was installed${NC}"
+  echo -e "  ${BOLD}Installed${NC}"
   echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
   printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Slash commands" "$COMMANDS_INSTALLED"
   printf "  %-30s ${GREEN}${BOLD}%s${NC}\n" "Tool repos" "$((REPOS_CLONED + REPOS_UPDATED))"
@@ -831,7 +830,7 @@ print_summary() {
   echo ""
 
   # File locations
-  echo -e "  ${BOLD}Where things live${NC}"
+  echo -e "  ${BOLD}File locations${NC}"
   echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
   echo -e "  Commands      ${DIM}$COMMANDS_DIR${NC}"
   echo -e "  Hub repos     ${DIM}$CLONE_DIR${NC}"
@@ -855,15 +854,13 @@ print_summary() {
     echo -e "  ${DIM}Run setup.sh --full or setup.sh --pick for more.${NC}"
   fi
 
-  # The big moment: try this first
   echo ""
-  echo -e "  ${BOLD}${GREEN}Try this first:${NC}"
+  echo -e "  ${BOLD}${GREEN}Try first:${NC}"
   echo ""
   echo -e "    ${CYAN}claude /read-the-room${NC}"
-  echo -e "    ${DIM}Paste any Slack message or email and Claude decodes${NC}"
-  echo -e "    ${DIM}what is really being said underneath the surface.${NC}"
+  echo -e "    ${DIM}Paste a message, get back what is actually being said.${NC}"
   echo ""
-  echo -e "  ${BOLD}Then explore:${NC}"
+  echo -e "  ${BOLD}Other useful ones:${NC}"
   echo ""
   echo -e "  ${CYAN}1${NC}  claude /briefing        ${DIM}Your daily GitHub activity summary${NC}"
   echo -e "  ${CYAN}2${NC}  claude /polish          ${DIM}Clean up a rough email or message${NC}"

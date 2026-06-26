@@ -1,12 +1,12 @@
 # AI BU Hub / Command Reference
 
-130+ slash commands organized by workflow. Every command works globally from any directory.
+130+ slash commands, organized by workflow. All commands work globally from any directory.
 
 ---
 
 ## Greatest Hits
 
-The 10 commands people use most. Start here.
+The 10 most-used commands.
 
 | Command | What it does |
 |---------|-------------|
@@ -62,7 +62,7 @@ The 10 commands people use most. Start here.
 
 ## Starting Your Day
 
-Open your terminal, run these two commands, and know exactly where to focus.
+Two commands to know where to focus.
 
 ### Morning Briefing (ai-bu-daily-briefing)
 
@@ -86,7 +86,7 @@ claude /risk-radar          # Anything on fire?
 
 ## Writing a Message
 
-Before you hit send on anything, run it through these.
+Run these before hitting send.
 
 ### Message Polishing (ai-bu-message-polisher)
 
@@ -126,7 +126,7 @@ claude /style-check "the polished version"
 
 ## Preparing for a Meeting
 
-Run these before, during, and after any meeting that matters.
+Before, during, and after meetings.
 
 ### Meeting Notes (ai-bu-meeting-notes)
 
@@ -156,7 +156,7 @@ claude /meeting-email       # Draft the follow-up email
 
 ## End of Week / End of Sprint
 
-Generate your status update in minutes instead of spending Friday afternoon remembering what you did.
+Generate status updates from Git history.
 
 ### Status Reports (ai-bu-status-report)
 
@@ -180,7 +180,7 @@ claude /style-check "..."   # Final quality pass
 
 ## Writing Content
 
-Blog posts, conference talks, presentations, and documentation.
+Blog posts, talks, presentations, docs.
 
 ### Conference Proposals (ai-bu-cfp-generator)
 
@@ -211,10 +211,10 @@ claude /cfp-variants        # Try different angles
 | `/slide-from-doc` | Distill a long document into a slide deck |
 | `/slide-story` | Build narrative-driven slides using SCR framework |
 | `/slide-hooks` | Generate compelling opening hooks for a talk |
-| `/slide-review` | Get brutally honest feedback on a presentation |
+| `/slide-review` | Honest feedback on a presentation |
 | `/slide-pacing` | Analyze and fix presentation pacing |
 | `/slide-notes` | Generate presenter cue card notes |
-| `/slide-visuals` | Art direction for slide visuals |
+| `/slide-visuals` | Suggest visuals for slides |
 | `/slide-to-marp` | Convert an outline to Marp markdown format |
 
 ```bash
@@ -232,28 +232,28 @@ claude /slide-to-marp       # Convert to Marp for rendering
 |---------|-------------|
 | `/blog-from-pr` | Turn a pull request into a blog post |
 | `/draft-announcement` | Write a product or project announcement |
-| `/write-docs` | Write documentation that engineers actually read |
-| `/release-notes` | Write release notes for downstream maintainers |
-| `/changelog` | Generate a CHANGELOG.md entry |
+| `/write-docs` | Write useful documentation |
+| `/release-notes` | Write release notes |
+| `/changelog` | Generate a CHANGELOG entry |
 
 ---
 
 ## Researching Something
 
-Summarize documents, get second opinions, and stress-test your thinking.
+Summarize documents and stress-test your thinking.
 
 ### Speed Reader (ai-bu-speed-reader)
 
 | Command | Description |
 |---------|-------------|
-| `/speedread` | Full summary of a long document or web page |
+| `/speedread` | Summarize a long document or web page |
 | `/speedread-verdict` | Quick "read it or skip it" assessment |
-| `/speedread-bullets` | The fastest possible summary, just the signal |
+| `/speedread-bullets` | Fastest possible summary, just the signal |
 | `/speedread-extract` | Pull every concrete fact and number |
-| `/speedread-eli5` | Explain so a non-technical person understands |
-| `/speedread-annotate` | Annotated version with inline commentary |
+| `/speedread-eli5` | Non-technical explanation |
+| `/speedread-annotate` | Annotated version with inline notes |
 | `/speedread-compare` | Compare two documents side by side |
-| `/speedread-questions` | Generate the questions a peer reviewer would ask |
+| `/speedread-questions` | Questions a peer reviewer would ask |
 | `/speedread-chain` | Map intellectual lineage and related work |
 
 ```bash
@@ -280,7 +280,7 @@ claude /speedread-verdict   # Worth the full read?
 
 ## Tracking the Landscape
 
-Keep tabs on competitors, upstream projects, and what your team shipped.
+Competitors, upstream projects, team output.
 
 ### Competitive Watch (ai-bu-competitive-watch)
 
@@ -328,7 +328,7 @@ claude /battlecard          # Prep for a sales call
 
 ## Engineering Workflows
 
-Code review, repo exploration, sprint ceremonies, and demos.
+Code review, repo exploration, sprint ceremonies, demos.
 
 ### Code and Repo (ai-bu-claude-commands)
 
@@ -378,4 +378,4 @@ Code review, repo exploration, sprint ceremonies, and demos.
 
 ---
 
-*Keep this open in a tab until the commands become muscle memory.*
+*Bookmark this file. You will use it more than you expect.*
