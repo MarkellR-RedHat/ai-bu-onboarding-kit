@@ -1,77 +1,88 @@
-# First Steps with the AI BU Hub
+# Your First 10 Minutes with AI BU Hub
 
-You ran `setup.sh` and everything is installed. Now what?
-
-This is an interactive walkthrough. Each step builds on the last, so follow them in order. By the end, you will have used the core commands and know how they fit together.
+You ran `setup.sh` and everything is installed. This walkthrough builds your confidence step by step, starting with the most impressive commands and working toward power-user workflows. Each step takes about 2 minutes.
 
 ## Before you start
 
-Open a terminal and make sure Claude Code is working:
+Open a terminal and confirm Claude Code is working:
 
 ```bash
 claude --version
 ```
 
-**Expected output:**
-```
-claude v1.x.x
-```
+You should see something like `claude v1.x.x`. If you get "command not found," visit the [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) to install it first.
 
-If you get "command not found," Claude Code is not installed. See the [Claude Code docs](https://docs.anthropic.com/en/docs/claude-code) to set it up.
-
-You can run Claude Code from any directory. The slash commands you installed are available globally.
+Slash commands are global. You can run them from any directory.
 
 ---
 
-## Step 1: Get your daily briefing
+## Step 1: Read the room on a message (1 min)
 
-The `/briefing` command pulls your GitHub activity and gives you a summary of what happened overnight, what PRs need your attention, and what is coming up.
+Start with something that delivers instant value. The `/read-the-room` command analyzes a message someone sent you and decodes what is really going on underneath the surface.
+
+```bash
+claude /read-the-room
+```
+
+Paste in a Slack message, email, or PR comment that felt "off" and let Claude break it down for you.
+
+**What you should see:**
+
+- The literal ask vs. the real ask
+- Emotional tone and urgency level
+- Suggested response strategies
+- Things the sender might not be saying directly
+
+**When to use it:** Before responding to a message that feels loaded, political, or unclear.
+
+---
+
+## Step 2: Get your daily briefing (2 min)
+
+The `/briefing` command pulls your GitHub activity and gives you a structured morning summary.
 
 ```bash
 claude /briefing
 ```
 
-**Expected output:**
+**What you should see:**
 
-You should see a structured summary with sections like:
-- PRs you need to review
+- PRs that need your review
 - PRs you are waiting on
 - Recent issues and mentions
 - Suggested priorities for the day
 
-**When to use it:** Every morning, or whenever you want a quick status check on your GitHub activity.
+If you see "no GitHub activity found," make sure `gh auth status` shows you are authenticated.
 
-> If you see "no GitHub activity found," make sure `gh auth status` shows you are authenticated.
+**When to use it:** Every morning, first thing. It replaces 10 minutes of GitHub browsing.
 
 ---
 
-## Step 2: Polish a rough message
+## Step 3: Polish a rough message (1 min)
 
-The `/polish` command takes a rough draft and cleans it up. It fixes grammar, tightens the language, and keeps your voice.
-
-Try this example:
+The `/polish` command takes your rough draft and makes it land better. No corporate fluff, just tighter and clearer.
 
 ```bash
 claude /polish "hey team, wanted to let u know that the thing we talked about last week is done, the PR is up and i think we should merge it soon before the other changes land"
 ```
 
-**Expected output:**
+**What you should see:**
 
-A cleaned-up version of your message. Something like:
+A cleaned-up version like:
 
-> Team, the work we discussed last week is complete. The PR is up and ready for review. I recommend merging soon before the upcoming changes land.
+> Team, the work we discussed last week is complete. The PR is up and ready for review. I recommend we merge before the upcoming changes land.
 
-Compare the two versions. The meaning stays the same, but the language is tighter and more professional.
+Same meaning, tighter language, more professional. Your voice stays intact.
 
-**When to use it:** Before sending emails, Slack messages, or PR descriptions. Paste in your rough draft and get back something clean.
+**When to use it:** Before sending emails, Slack messages, or PR descriptions.
 
 ---
 
-## Step 3: Check your writing style
+## Step 4: Check your writing style (2 min)
 
-The `/style-check` command reviews a document against Red Hat writing guidelines. It catches jargon, passive voice, and inconsistencies.
+The `/style-check` command reviews content against Red Hat writing guidelines. It catches the stuff you stop noticing after a while.
 
-Create a quick test file first:
+Create a quick test file:
 
 ```bash
 cat > /tmp/test-post.md << 'EOF'
@@ -92,148 +103,145 @@ Now check it:
 claude /style-check /tmp/test-post.md
 ```
 
-**Expected output:**
+**What you should see:**
 
-A list of style issues found in the document. You should see flags for:
+Flags for:
 - "utilize" (prefer "use")
 - "leverage" (overused jargon)
 - "in order to" (wordy, just say "to")
 - "basically" (filler word)
 - Passive voice ("was designed to be used")
 
-**When to use it:** Before publishing blog posts, documentation, or any external-facing content.
+Each finding includes the line, the issue, and a concrete fix.
+
+**When to use it:** Before publishing blog posts, docs, or anything external-facing.
 
 ---
 
-## Step 4: Generate a status report
+## Step 5: Generate a status report (2 min)
 
-The `/status-report` command builds a weekly status report from your recent Git commits, merged PRs, and project activity.
+The `/status-report` command builds a weekly update from your Git commits and merged PRs. No more Friday afternoon scrambling.
 
-Navigate to a project repo and run:
+Navigate to a real repo with recent commits:
 
 ```bash
-cd ~/your-project-repo  # use a real repo with recent commits
+cd ~/your-project-repo
 claude /status-report
 ```
 
-**Expected output:**
+**What you should see:**
 
-A structured status report with sections like:
 - What you shipped this week
-- PRs merged
+- PRs merged with summaries
 - Work in progress
 - Blockers (if any)
 
-If the report looks thin, make sure you are running it inside a Git repo with recent commits.
+If the report looks thin, make sure you are in a repo with recent activity.
 
-**When to use it:** Friday afternoon, or whenever your manager asks what you have been working on.
+**When to use it:** Friday afternoon, or when someone asks "what have you been working on?"
 
 ---
 
-## Step 5: Prepare meeting notes
+## Step 6: Speed-read a long document (2 min)
 
-The `/meeting-notes` command helps you structure raw meeting notes into a clean format with action items, decisions, and follow-ups.
+The `/speedread` command summarizes long documents so you can decide whether to read the full thing.
 
 ```bash
-claude /meeting-notes
+claude /speedread https://some-long-technical-doc-url
 ```
 
-Claude will ask you to paste in your raw notes. Try pasting something like:
-
-```
-talked about q3 planning. maria said we need to ship the auth service
-by end of july. john will handle the migration. need to check with
-platform team about the new API limits. decided to skip the v2 redesign
-for now. next meeting is thursday.
-```
-
-**Expected output:**
-
-Structured notes with:
-- **Decisions:** Skip v2 redesign for now
-- **Action items:** John handles migration; check with platform team on API limits
-- **Deadlines:** Auth service ships by end of July
-- **Next meeting:** Thursday
-
-**When to use it:** Right after a meeting, while the details are still fresh.
-
----
-
-## Step 6: Review as a persona
-
-The `/review-as-persona` command lets you get feedback on your writing from a specific perspective, like a customer, a senior engineer, or a product manager.
+Or point it at a local file:
 
 ```bash
-claude /review-as-persona
+claude /speedread ~/Downloads/that-30-page-whitepaper.pdf
 ```
 
-Claude will ask you for the persona and the content to review. Try asking for a "skeptical senior engineer" review of a technical blog post or README.
+**What you should see:**
 
-**Expected output:**
+- One-paragraph summary
+- Key claims and findings
+- Important numbers and facts
+- Whether it is worth reading the whole thing
 
-Feedback written from the perspective you chose, highlighting concerns that persona would have. A senior engineer might flag missing error handling, vague architecture claims, or untested assumptions.
-
-**When to use it:** When you want a second opinion on how something reads to a particular audience.
+**Power tip:** Use `/speedread-verdict` for a quick "read it or skip it" answer, or `/speedread-extract` to pull every concrete fact.
 
 ---
 
-## More commands to explore
+## Putting it all together: The 5-minute challenge
 
-These are available too, depending on which repos were set up:
+Chain three commands to solve a real task. Scenario: you need to send your manager a polished end-of-week update.
+
+**1. Generate the raw material:**
+```bash
+claude /status-report
+```
+Copy the output.
+
+**2. Polish the language:**
+```bash
+claude /polish "<paste your status report>"
+```
+
+**3. Final quality check:**
+```bash
+claude /style-check "<paste the polished version>"
+```
+
+You just went from raw Git history to a send-ready status update in under 5 minutes. That is the AI BU Hub workflow: chain commands together to move faster.
+
+---
+
+## What to explore next
+
+Now that you have the basics, here are the commands worth exploring by category:
+
+### Communication power tools
 
 | Command | What it does |
 |---------|-------------|
-| `/cfp-generator` | Draft a conference talk proposal |
-| `/slide-outliner` | Outline a slide deck from a topic |
-| `/competitive-watch` | Get a summary of competitor activity |
-| `/upstream-tracker` | Track upstream project changes |
-| `/shipped-digest` | Summarize what shipped recently |
-| `/speed-reader` | Summarize a long document quickly |
+| `/shorten` | Cut a message to half its length without losing meaning |
+| `/tone-shift` | Rewrite a message in a different tone (formal, casual, urgent) |
+| `/bad-news` | Deliver bad news using the BIFF framework |
+| `/decline-politely` | Say no without burning bridges |
+| `/escalation` | Format an escalation email properly |
 
----
+### Meeting productivity
 
-## 5-Minute Challenge
+| Command | What it does |
+|---------|-------------|
+| `/meeting-notes` | Structure raw notes into decisions and action items |
+| `/pre-brief` | Prepare for a meeting by analyzing the agenda |
+| `/action-items` | Extract every action item from meeting notes |
+| `/meeting-cancel` | Assess whether a meeting should just be an email |
 
-Put what you learned together. Use three commands in sequence to solve a real task:
+### Content creation
 
-**Scenario:** You need to send your manager a polished end-of-week update.
+| Command | What it does |
+|---------|-------------|
+| `/cfp` | Draft a conference talk proposal |
+| `/slides` | Build a presentation outline |
+| `/blog-from-pr` | Turn a PR into a blog post |
+| `/talk-to-blog` | Convert talk content to a blog post |
 
-1. **Generate the raw material:**
-   ```bash
-   claude /status-report
-   ```
-   Copy the output.
+### Intelligence and tracking
 
-2. **Polish the language:**
-   ```bash
-   claude /polish "<paste your status report here>"
-   ```
-   This tightens the wording and makes it ready to send.
+| Command | What it does |
+|---------|-------------|
+| `/whats-new` | See what competitors just shipped |
+| `/upstream` | Track upstream project changes |
+| `/shipped` | Summarize what your team shipped |
+| `/landscape` | Map the competitive landscape |
 
-3. **Style-check before sending:**
-   ```bash
-   claude /style-check "<paste the polished version>"
-   ```
-   Catch any remaining jargon or passive voice.
-
-You just went from raw Git history to a send-ready status update in under 5 minutes. That is the AI BU Hub workflow: chain commands together to get things done faster.
+For the complete reference, see [commands-cheatsheet.md](commands-cheatsheet.md).
 
 ---
 
 ## Tips
 
-**Run commands from your project directory.** Some commands (like `/status-report`) use your Git history, so run them from inside a repo.
+**Run commands from your project directory.** Commands like `/status-report` and `/shipped` use your Git history, so run them from inside a repo.
 
-**Pipe in content.** Many commands accept input from stdin or as arguments. Check each command's help for details.
+**Many commands accept inline input.** You can pass text directly or let Claude prompt you for it.
 
-**Update regularly.** Run `./update.sh` to pull the latest versions of all commands from the Hub repos.
+**Update regularly.** Run `./update.sh` to pull the latest versions of all commands.
 
-## Something broken?
-
-Run the verification script:
-
-```bash
-./verify.sh
-```
-
-This checks that all prerequisites are installed, repos are cloned, and commands are in place. If something is missing, run `setup.sh` again.
+**Something broken?** Run `./verify.sh` to get a full health check with diagnostics and fix suggestions.
