@@ -18,8 +18,10 @@ COMMANDS_DIR="$HOME/.claude/commands"
 CLONE_DIR="$HOME/.ai-bu-hub"
 MCP_CONFIG="$HOME/.claude/settings.json"
 BACKUP_DIR="$HOME/.ai-bu-hub/.backups/$(date +%Y%m%d-%H%M%S)"
-VERSION="2.1.0"
+VERSION="2.2.0"
 START_TIME=$(date +%s)
+MAX_CLONE_RETRIES=2
+CLONE_TIMEOUT=60
 
 # All AI BU Hub repos with descriptions
 declare -A REPO_DESC
@@ -245,6 +247,108 @@ warn()    { echo -e "  ${WARN} $1"; }
 fail()    { echo -e "  ${CROSS} $1"; }
 
 # -------------------------------------------------------
+# Safe clone with retry, timeout, and partial-clone cleanup
+# -------------------------------------------------------
+safe_clone() {
+  local repo_url=$1
+  local dest_dir=$2
+  local attempt=0
+
+  while [[ $attempt -lt $MAX_CLONE_RETRIES ]]; do
+    attempt=$((attempt + 1))
+
+    # Clean up any partial clone from a previous failed attempt
+    if [[ -d "$dest_dir" ]] && [[ ! -d "$dest_dir/.git" ]]; then
+      rm -rf "$dest_dir"
+    fi
+
+    # Skip if already fully cloned (caller handles update logic)
+    if [[ -d "$dest_dir/.git" ]]; then
+      return 0
+    fi
+
+    if timeout_cmd "$CLONE_TIMEOUT" git clone --quiet "$repo_url" "$dest_dir" 2>/dev/null; then
+      return 0
+    fi
+
+    # Clean up the failed clone directory so the next attempt starts clean
+    [[ -d "$dest_dir" ]] && rm -rf "$dest_dir"
+
+    if [[ $attempt -lt $MAX_CLONE_RETRIES ]]; then
+      info "Clone attempt $attempt failed. Retrying in 3s..."
+      sleep 3
+    fi
+  done
+
+  return 1
+}
+
+# -------------------------------------------------------
+# Cross-platform timeout wrapper (macOS coreutils vs Linux)
+# -------------------------------------------------------
+timeout_cmd() {
+  local duration=$1
+  shift
+  if command -v gtimeout &>/dev/null; then
+    # macOS with coreutils installed via Homebrew
+    gtimeout "$duration" "$@"
+  elif command -v timeout &>/dev/null; then
+    # Linux (GNU coreutils) or macOS with newer coreutils
+    timeout "$duration" "$@"
+  else
+    # No timeout available, just run the command directly
+    "$@"
+  fi
+}
+
+# -------------------------------------------------------
+# Repair a repo with a corrupted .git directory
+# -------------------------------------------------------
+repair_repo() {
+  local repo_dir=$1
+  local repo_url=$2
+
+  if [[ -d "$repo_dir/.git" ]]; then
+    # Verify the git repo is not corrupted
+    if git -C "$repo_dir" rev-parse HEAD &>/dev/null 2>&1; then
+      return 0  # repo is healthy
+    fi
+
+    warn "Corrupted repo detected at ${repo_dir}. Re-cloning."
+    rm -rf "$repo_dir"
+    if safe_clone "$repo_url" "$repo_dir"; then
+      success "Re-cloned successfully."
+      return 0
+    else
+      fail "Re-clone failed."
+      return 1
+    fi
+  fi
+  return 0
+}
+
+# -------------------------------------------------------
+# Validate commands directory is writable
+# -------------------------------------------------------
+check_commands_dir() {
+  if [[ -d "$COMMANDS_DIR" ]] && [[ ! -w "$COMMANDS_DIR" ]]; then
+    fail "Cannot write to $COMMANDS_DIR (permission denied)"
+    info "Fix: chmod u+w $COMMANDS_DIR"
+    exit 1
+  fi
+
+  if [[ -L "$COMMANDS_DIR" ]]; then
+    local real_path
+    real_path=$(readlink -f "$COMMANDS_DIR" 2>/dev/null || readlink "$COMMANDS_DIR")
+    if [[ ! -d "$real_path" ]]; then
+      fail "$COMMANDS_DIR is a broken symlink pointing to $real_path"
+      info "Fix: rm $COMMANDS_DIR && mkdir -p $COMMANDS_DIR"
+      exit 1
+    fi
+  fi
+}
+
+# -------------------------------------------------------
 # Detect OS
 # -------------------------------------------------------
 detect_os() {
@@ -350,18 +454,22 @@ check_prerequisites() {
     missing=$((missing + 1))
   fi
 
-  # gh CLI (recommended)
+  # gh CLI (recommended, with detailed impact explanation)
   if command -v gh &>/dev/null; then
     if gh auth status &>/dev/null 2>&1; then
       success "GitHub CLI ${DIM}(authenticated)${NC}"
     else
       warn "GitHub CLI installed but not authenticated"
       info "Run: gh auth login"
+      info "Without auth: /briefing, /status-report, /shipped, and GitHub MCP will not work."
       warnings=$((warnings + 1))
     fi
   else
-    warn "GitHub CLI (gh) not installed. Some features will be limited."
+    warn "GitHub CLI (gh) not installed"
     info "Install: $(install_hint gh)"
+    info "Without gh: /briefing, /status-report, /shipped, GitHub MCP server,"
+    info "  and any command that reads PRs or issues will be unavailable."
+    info "  Everything else (polish, style-check, speedread, etc.) works fine."
     warnings=$((warnings + 1))
   fi
 
@@ -382,6 +490,30 @@ check_prerequisites() {
       warn "npx not available"
       warnings=$((warnings + 1))
     fi
+  fi
+
+  # Disk space check (need at least 100MB for repos)
+  local avail_kb
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    avail_kb=$(df -k "$HOME" | tail -1 | awk '{print $4}')
+  else
+    avail_kb=$(df -k "$HOME" | tail -1 | awk '{print $4}')
+  fi
+  if [[ -n "$avail_kb" ]] && [[ "$avail_kb" =~ ^[0-9]+$ ]]; then
+    if [[ $avail_kb -lt 102400 ]]; then
+      fail "Less than 100MB of disk space available on $HOME"
+      info "Free up space and try again."
+      missing=$((missing + 1))
+    else
+      local avail_mb=$((avail_kb / 1024))
+      success "Disk space ${DIM}${avail_mb}MB available${NC}"
+    fi
+  fi
+
+  # Home directory writable check
+  if [[ ! -w "$HOME" ]]; then
+    fail "Home directory $HOME is not writable"
+    missing=$((missing + 1))
   fi
 
   echo ""
@@ -409,11 +541,26 @@ setup_directories() {
     return
   fi
 
-  mkdir -p "$COMMANDS_DIR"
-  success "Commands directory: ${DIM}$COMMANDS_DIR${NC}"
+  # Check if commands directory exists and is writable
+  check_commands_dir
 
-  mkdir -p "$CLONE_DIR"
-  success "Hub directory: ${DIM}$CLONE_DIR${NC}"
+  if [[ -d "$COMMANDS_DIR" ]]; then
+    local existing_count
+    existing_count=$(find "$COMMANDS_DIR" -maxdepth 1 -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+    success "Commands directory: ${DIM}$COMMANDS_DIR${NC} ${DIM}(${existing_count} existing commands)${NC}"
+  else
+    mkdir -p "$COMMANDS_DIR"
+    success "Commands directory: ${DIM}$COMMANDS_DIR${NC} ${DIM}(created)${NC}"
+  fi
+
+  if [[ -d "$CLONE_DIR" ]]; then
+    local existing_repos
+    existing_repos=$(find "$CLONE_DIR" -maxdepth 1 -type d -name "ai-bu-*" 2>/dev/null | wc -l | tr -d ' ')
+    success "Hub directory: ${DIM}$CLONE_DIR${NC} ${DIM}(${existing_repos} existing repos)${NC}"
+  else
+    mkdir -p "$CLONE_DIR"
+    success "Hub directory: ${DIM}$CLONE_DIR${NC} ${DIM}(created)${NC}"
+  fi
 
   mkdir -p "$BACKUP_DIR"
   success "Backup directory: ${DIM}$BACKUP_DIR${NC}"
@@ -522,9 +669,22 @@ sync_repos() {
   step "Installing tools / ${mode_label}"
   show_eta
 
-  # Quick connectivity check
+  # Quick connectivity check with OS-specific troubleshooting
   if ! git ls-remote --exit-code "https://github.com/$GITHUB_ORG/ai-bu-claude-commands.git" HEAD &>/dev/null 2>&1; then
-    fail "Can't reach GitHub right now. Check your internet connection and try again in a minute."
+    fail "Cannot reach GitHub."
+    echo ""
+    info "Troubleshooting:"
+    info "  1. Check your internet connection"
+    info "  2. Verify git credentials: git credential-helper"
+    if [[ "$(uname -s)" == "Darwin" ]]; then
+      info "  3. macOS: check if Keychain Access has stale GitHub tokens"
+      info "  4. VPN: some corporate VPNs block git over HTTPS"
+    else
+      info "  3. Linux: check if credential store is configured"
+      info "     git config --global credential.helper store"
+      info "  4. Proxy: export HTTPS_PROXY if behind a corporate proxy"
+    fi
+    info "  5. Try: git ls-remote https://github.com/$GITHUB_ORG/ai-bu-claude-commands.git"
     exit 1
   fi
 
@@ -533,6 +693,8 @@ sync_repos() {
       local repo_dir="$CLONE_DIR/$repo"
       if [[ -d "$repo_dir/.git" ]]; then
         info "Would update: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
+      elif [[ -d "$repo_dir" ]] && [[ ! -d "$repo_dir/.git" ]]; then
+        info "Would re-clone (partial): ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
       else
         info "Would install: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
       fi
@@ -546,24 +708,55 @@ sync_repos() {
   for repo in "${REPOS[@]}"; do
     current=$((current + 1))
     local repo_dir="$CLONE_DIR/$repo"
+    local repo_url="https://github.com/$GITHUB_ORG/$repo.git"
     local desc="${REPO_DESC[$repo]:-}"
     local progress="${DIM}(${current}/${total})${NC}"
 
+    # Handle partial clone leftovers (directory exists but no .git)
+    if [[ -d "$repo_dir" ]] && [[ ! -d "$repo_dir/.git" ]]; then
+      warn "${repo} has a partial clone. Cleaning up and re-cloning.  ${progress}"
+      rm -rf "$repo_dir"
+    fi
+
     if [[ -d "$repo_dir/.git" ]]; then
-      if git -C "$repo_dir" pull --quiet 2>/dev/null; then
+      # Verify repo health before pulling
+      if ! repair_repo "$repo_dir" "$repo_url"; then
+        FAILED_REPOS+=("$repo")
+        REPOS_FAILED=$((REPOS_FAILED + 1))
+        continue
+      fi
+
+      # Handle diverged branches: reset to track upstream
+      local pull_output
+      if pull_output=$(git -C "$repo_dir" pull --quiet 2>&1); then
         success "${BOLD}${repo}${NC} ${DIM}updated${NC}  ${progress}"
         REPOS_UPDATED=$((REPOS_UPDATED + 1))
+      elif echo "$pull_output" | grep -q "diverged\|CONFLICT\|not possible" 2>/dev/null; then
+        warn "${repo} has local changes that conflict with upstream."
+        info "Resetting to upstream version..."
+        local default_branch
+        default_branch=$(git -C "$repo_dir" symbolic-ref refs/remotes/origin/HEAD 2>/dev/null | sed 's@^refs/remotes/origin/@@' || echo "main")
+        if git -C "$repo_dir" fetch --quiet 2>/dev/null && \
+           git -C "$repo_dir" checkout "$default_branch" --quiet 2>/dev/null && \
+           git -C "$repo_dir" reset --hard "origin/$default_branch" --quiet 2>/dev/null; then
+          success "${BOLD}${repo}${NC} ${DIM}reset to upstream${NC}  ${progress}"
+          REPOS_UPDATED=$((REPOS_UPDATED + 1))
+        else
+          warn "${repo} could not update. Using existing version.  ${progress}"
+          FAILED_REPOS+=("$repo")
+          REPOS_FAILED=$((REPOS_FAILED + 1))
+        fi
       else
         warn "${repo} could not update. Using existing version.  ${progress}"
         FAILED_REPOS+=("$repo")
         REPOS_FAILED=$((REPOS_FAILED + 1))
       fi
     else
-      if git clone --quiet "https://github.com/$GITHUB_ORG/$repo.git" "$repo_dir" 2>/dev/null; then
+      if safe_clone "$repo_url" "$repo_dir"; then
         success "${BOLD}${repo}${NC}  ${DIM}${desc}${NC}  ${progress}"
         REPOS_CLONED=$((REPOS_CLONED + 1))
       else
-        warn "${repo} could not be cloned. Skipping for now.  ${progress}"
+        fail "${repo} could not be cloned after $MAX_CLONE_RETRIES attempts.  ${progress}"
         FAILED_REPOS+=("$repo")
         REPOS_FAILED=$((REPOS_FAILED + 1))
       fi
@@ -837,15 +1030,20 @@ print_summary() {
   echo -e "  MCP config    ${DIM}$MCP_CONFIG${NC}"
   echo -e "  Backups       ${DIM}$BACKUP_DIR${NC}"
 
-  # Failures (friendly, non-scary)
+  # Failures (friendly, non-scary, actionable)
   if [[ ${#FAILED_REPOS[@]} -gt 0 ]]; then
     echo ""
     echo -e "  ${YELLOW}${BOLD}Skipped (not blocking)${NC}"
     echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
     for f in "${FAILED_REPOS[@]}"; do
-      echo -e "  ${WARN} $f"
+      echo -e "  ${WARN} $f  ${DIM}${REPO_DESC[$f]:-}${NC}"
     done
-    echo -e "  ${DIM}Run setup.sh again when you have a stable connection to retry.${NC}"
+    echo ""
+    echo -e "  ${DIM}To retry just the failed repos:${NC}"
+    echo -e "  ${CYAN}./setup.sh${NC}  ${DIM}(already-installed repos will update in place)${NC}"
+    echo ""
+    echo -e "  ${DIM}To clone one manually:${NC}"
+    echo -e "  ${CYAN}git clone https://github.com/$GITHUB_ORG/<repo-name>.git ~/.ai-bu-hub/<repo-name>${NC}"
   fi
 
   if $MINIMAL; then

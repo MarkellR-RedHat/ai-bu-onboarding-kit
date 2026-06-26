@@ -217,7 +217,11 @@ Also try `/speedread-verdict` for a quick "read or skip" answer, or `/speedread-
 
 ## Chaining commands
 
-Three commands to go from raw Git history to a send-ready status update.
+The real power shows up when you chain tools together. Each output feeds the next input.
+
+### Chain 1: Status report to send-ready email
+
+Three commands to go from raw Git history to a polished, style-checked status update.
 
 **1. Generate the raw material:**
 ```bash
@@ -234,6 +238,98 @@ claude /polish "<paste your status report>"
 **3. Final quality check:**
 ```bash
 claude /style-check "<paste the polished version>"
+```
+
+### Chain 2: Conference talk from a PR
+
+You shipped something interesting. Turn it into a conference talk proposal.
+
+**1. Turn the PR into a blog post:**
+```bash
+claude /blog-from-pr https://github.com/org/repo/pull/123
+```
+
+**2. Convert the blog post into a CFP:**
+```bash
+claude /cfp-from-blog "<paste the blog post>"
+```
+
+**3. Stress-test the proposal:**
+```bash
+claude /cfp-reviewer "<paste the proposal>"
+```
+
+**4. Try different angles:**
+```bash
+claude /cfp-variants "<paste the proposal>"
+```
+
+### Chain 3: Meeting prep to follow-up
+
+Full meeting lifecycle in four commands.
+
+**1. Prep before the meeting:**
+```bash
+claude /pre-brief "Agenda: discuss Q3 roadmap, review scaling benchmarks, assign ownership"
+```
+
+**2. After the meeting, structure your raw notes:**
+```bash
+claude /meeting-notes "<paste raw notes>"
+```
+
+**3. Extract action items:**
+```bash
+claude /action-items "<paste structured notes>"
+```
+
+**4. Draft the follow-up email:**
+```bash
+claude /meeting-email "<paste notes and action items>"
+```
+
+### Chain 4: Competitive intelligence briefing
+
+Prepare for a customer call or strategy meeting.
+
+**1. See what competitors shipped recently:**
+```bash
+claude /whats-new "vLLM, TensorRT-LLM, SGLang"
+```
+
+**2. Map the landscape:**
+```bash
+claude /landscape "LLM inference serving"
+```
+
+**3. Generate a battlecard:**
+```bash
+claude /battlecard "vLLM vs our product"
+```
+
+### Chain 5: Document triage to team summary
+
+You have a stack of documents to review. Get through them fast.
+
+**1. Quick verdict on each doc:**
+```bash
+claude /speedread-verdict ~/Downloads/whitepaper-1.pdf
+claude /speedread-verdict ~/Downloads/whitepaper-2.pdf
+```
+
+**2. Deep dive on the ones worth reading:**
+```bash
+claude /speedread ~/Downloads/whitepaper-1.pdf
+```
+
+**3. Pull hard facts and numbers:**
+```bash
+claude /speedread-extract ~/Downloads/whitepaper-1.pdf
+```
+
+**4. Share with the team, polished:**
+```bash
+claude /polish "<paste your summary of findings>"
 ```
 
 ---
@@ -278,6 +374,28 @@ claude /style-check "<paste the polished version>"
 | `/landscape` | Map the competitive landscape |
 
 For the complete reference, see [commands-cheatsheet.md](commands-cheatsheet.md).
+
+---
+
+## Troubleshooting
+
+**"No GitHub activity found" from `/briefing`:**
+Check that `gh auth status` returns authenticated. If not, run `gh auth login`. If you do not have `gh` installed, `/briefing` cannot read your GitHub data.
+
+**Commands not found after setup:**
+Verify that `~/.claude/commands/` contains `.md` files. If the directory is empty, run `./setup.sh` again. If you are on Linux and your home directory is on an NFS mount, check that the mount is writable.
+
+**Clone failures during setup:**
+The script retries failed clones automatically. If repos keep failing, check your network connection and try `git ls-remote https://github.com/MarkellR-RedHat/ai-bu-claude-commands.git` to test connectivity. Behind a corporate proxy? Set `HTTPS_PROXY` before running setup.
+
+**`/status-report` output is empty:**
+Make sure you are inside a git repo with recent commits. The command reads your local Git history. If you are in a fresh clone with no commits from you, the report will be blank.
+
+**MCP servers not working:**
+Run `./verify.sh` to check MCP server health. Common fixes: ensure Node.js 18+ is installed, check `~/.claude/settings.json` for correct server entries, and verify that `npx` is on your PATH.
+
+**Permission denied on `~/.claude/commands/`:**
+Run `chmod u+w ~/.claude/commands/` and try again. On shared systems, check that another user has not locked the directory.
 
 ---
 

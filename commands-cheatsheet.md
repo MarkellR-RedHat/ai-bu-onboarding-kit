@@ -351,6 +351,117 @@ Code review, repo exploration, sprint ceremonies, demos.
 
 ---
 
+## Cross-Tool Workflow Chains
+
+Workflows that chain multiple commands together. Each output feeds the next input.
+
+### Ship-to-Stage Pipeline
+
+You shipped a feature. Turn it into a talk.
+
+```bash
+# 1. Summarize what shipped
+claude /shipped
+
+# 2. Turn the best PR into a blog post
+claude /blog-from-pr https://github.com/org/repo/pull/42
+
+# 3. Convert the blog post into a CFP
+claude /cfp-from-blog "<paste blog post>"
+
+# 4. Build the slide deck
+claude /slides "<paste the CFP abstract and outline>"
+
+# 5. Generate speaker notes
+claude /slide-notes "<paste slide outline>"
+
+# 6. Get honest feedback before submitting
+claude /slide-review "<paste the full deck>"
+```
+
+### Monday Morning Triage
+
+Start the week with full context in under 5 minutes.
+
+```bash
+# 1. What happened while you were off
+claude /catch-me-up
+
+# 2. What needs attention right now
+claude /risk-radar
+
+# 3. What competitors shipped over the weekend
+claude /whats-new "vLLM, SGLang, TensorRT-LLM"
+
+# 4. Decide what to work on first
+claude /what-next
+```
+
+### Document Review Pipeline
+
+Process a batch of documents efficiently.
+
+```bash
+# 1. Quick triage: read or skip?
+claude /speedread-verdict doc1.pdf
+claude /speedread-verdict doc2.pdf
+
+# 2. Deep read the important ones
+claude /speedread doc1.pdf
+
+# 3. Pull every fact and number
+claude /speedread-extract doc1.pdf
+
+# 4. Get questions a reviewer would ask
+claude /speedread-questions doc1.pdf
+
+# 5. Polish your synthesis for the team
+claude /polish "<paste your summary>"
+claude /style-check "<paste polished version>"
+```
+
+### Stakeholder Communication Pipeline
+
+Prepare a difficult message with multiple review passes.
+
+```bash
+# 1. Draft the message
+claude /bad-news "<situation summary>"
+
+# 2. Run it through persona review
+claude /review-as "VP of Engineering" "<paste draft>"
+
+# 3. Check the tone
+claude /tone-check "<paste revised draft>"
+
+# 4. Polish and shorten
+claude /polish "<paste final draft>"
+claude /shorten "<paste polished version>"
+
+# 5. Style check before sending
+claude /style-check "<paste final version>"
+```
+
+### Upstream Contribution Workflow
+
+Find and prepare an upstream contribution.
+
+```bash
+# 1. Check for breaking changes
+claude /upstream-breaking "kubernetes/kubernetes"
+
+# 2. Find contribution opportunities
+claude /upstream-opportunity "kubernetes/kubernetes"
+
+# 3. Understand the repo structure
+claude /tldr-repo ~/src/kubernetes
+
+# 4. After your PR merges, write the blog post
+claude /blog-from-pr https://github.com/kubernetes/kubernetes/pull/999
+```
+
+---
+
 ## Management Commands
 
 | Command | Description |
@@ -375,6 +486,23 @@ Code review, repo exploration, sprint ceremonies, demos.
 | `~/.ai-bu-hub/` | Cloned Hub repo sources (17 repos) |
 | `~/.claude/settings.json` | MCP server configuration |
 | `~/.ai-bu-hub/.backups/` | Backup snapshots from updates |
+
+---
+
+## Troubleshooting
+
+| Symptom | Cause | Fix |
+|---------|-------|-----|
+| Command not found | Setup did not finish | Run `./setup.sh` again |
+| `/briefing` returns nothing | gh CLI not authenticated | Run `gh auth login` |
+| `/status-report` is empty | Not inside a git repo | `cd` into a repo with recent commits |
+| MCP server errors | Node.js missing or outdated | Install Node.js 18+ |
+| Clone failures during setup | Network or proxy issue | Check connection, set `HTTPS_PROXY` if needed |
+| Permission denied on commands dir | Directory not writable | `chmod u+w ~/.claude/commands/` |
+| Commands seem outdated | Hub repos not updated | Run `./update.sh` |
+| Setup hangs during clone | Slow network, large repo | Wait for timeout, or try `./setup.sh --minimal` |
+
+For a full diagnostic, run `./verify.sh`. It checks every component and suggests fixes.
 
 ---
 
