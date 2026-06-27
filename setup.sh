@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 set -uo pipefail
 
 # ============================================================================
@@ -23,27 +23,29 @@ START_TIME=$(date +%s)
 MAX_CLONE_RETRIES=2
 CLONE_TIMEOUT=60
 
-# All AI BU Hub repos with descriptions
-declare -A REPO_DESC
-REPO_DESC=(
-  [ai-bu-claude-commands]="Core slash commands for engineering workflows"
-  [ai-bu-mcp-server-kit]="MCP server configs (GitHub, Fetch, and more)"
-  [ai-bu-claude-md-templates]="CLAUDE.md project templates"
-  [ai-bu-daily-briefing]="Morning briefing and daily activity summaries"
-  [ai-bu-meeting-notes]="Meeting notes, agendas, and action items"
-  [ai-bu-status-report]="Weekly status reports from your Git history"
-  [ai-bu-review-as-persona]="Get feedback from any persona you describe"
-  [ai-bu-style-checker]="Red Hat writing style checker and auto-fixer"
-  [ai-bu-cfp-generator]="Conference talk proposal drafts and review"
-  [ai-bu-slide-outliner]="Presentation outlines and speaker notes"
-  [ai-bu-prompt-library]="Reusable prompt templates"
-  [ai-bu-git-productivity]="Git aliases and shortcuts"
-  [ai-bu-message-polisher]="Polish emails, Slack messages, and PR descriptions"
-  [ai-bu-competitive-watch]="Competitive intelligence and battlecards"
-  [ai-bu-upstream-tracker]="Upstream project change monitoring"
-  [ai-bu-shipped-digest]="Team shipping digest and release notes"
-  [ai-bu-speed-reader]="Summarize any long document in seconds"
-)
+# All AI BU Hub repos with descriptions (bash 3.2 compatible)
+repo_desc() {
+  case "$1" in
+    ai-bu-claude-commands)    echo "Core slash commands for engineering workflows" ;;
+    ai-bu-mcp-server-kit)     echo "MCP server configs (GitHub, Fetch, and more)" ;;
+    ai-bu-claude-md-templates) echo "CLAUDE.md project templates" ;;
+    ai-bu-daily-briefing)     echo "Morning briefing and daily activity summaries" ;;
+    ai-bu-meeting-notes)      echo "Meeting notes, agendas, and action items" ;;
+    ai-bu-status-report)      echo "Weekly status reports from your Git history" ;;
+    ai-bu-review-as-persona)  echo "Get feedback from any persona you describe" ;;
+    ai-bu-style-checker)      echo "Red Hat writing style checker and auto-fixer" ;;
+    ai-bu-cfp-generator)      echo "Conference talk proposal drafts and review" ;;
+    ai-bu-slide-outliner)     echo "Presentation outlines and speaker notes" ;;
+    ai-bu-prompt-library)     echo "Reusable prompt templates" ;;
+    ai-bu-git-productivity)   echo "Git aliases and shortcuts" ;;
+    ai-bu-message-polisher)   echo "Polish emails, Slack messages, and PR descriptions" ;;
+    ai-bu-competitive-watch)  echo "Competitive intelligence and battlecards" ;;
+    ai-bu-upstream-tracker)   echo "Upstream project change monitoring" ;;
+    ai-bu-shipped-digest)     echo "Team shipping digest and release notes" ;;
+    ai-bu-speed-reader)       echo "Summarize any long document in seconds" ;;
+    *) echo "" ;;
+  esac
+}
 
 ALL_REPOS=(
   ai-bu-claude-commands
@@ -595,7 +597,7 @@ interactive_pick() {
       else
         marker="${DIM}[ ]${NC}"
       fi
-      printf "  ${marker} ${BOLD}%2d${NC}  %-30s ${DIM}%s${NC}\n" "$num" "$repo" "${REPO_DESC[$repo]:-}"
+      printf "  ${marker} ${BOLD}%2d${NC}  %-30s ${DIM}%s${NC}\n" "$num" "$repo" "$(repo_desc "$repo")"
     done
 
     echo ""
@@ -693,11 +695,11 @@ sync_repos() {
     for repo in "${REPOS[@]}"; do
       local repo_dir="$CLONE_DIR/$repo"
       if [[ -d "$repo_dir/.git" ]]; then
-        info "Would update: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
+        info "Would update: ${BOLD}$repo${NC}  ${DIM}$(repo_desc "$repo")${NC}"
       elif [[ -d "$repo_dir" ]] && [[ ! -d "$repo_dir/.git" ]]; then
-        info "Would re-clone (partial): ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
+        info "Would re-clone (partial): ${BOLD}$repo${NC}  ${DIM}$(repo_desc "$repo")${NC}"
       else
-        info "Would install: ${BOLD}$repo${NC}  ${DIM}${REPO_DESC[$repo]:-}${NC}"
+        info "Would install: ${BOLD}$repo${NC}  ${DIM}$(repo_desc "$repo")${NC}"
       fi
     done
     return
@@ -710,7 +712,7 @@ sync_repos() {
     current=$((current + 1))
     local repo_dir="$CLONE_DIR/$repo"
     local repo_url="https://github.com/$GITHUB_ORG/$repo.git"
-    local desc="${REPO_DESC[$repo]:-}"
+    local desc="$(repo_desc "$repo")"
     local progress="${DIM}(${current}/${total})${NC}"
 
     # Handle partial clone leftovers (directory exists but no .git)
@@ -888,7 +890,7 @@ setup_mcp_servers() {
     mcp_choice="${mcp_choice:-y}"
   fi
 
-  if [[ "${mcp_choice,,}" == "n" ]]; then
+  if [[ "$(echo "$mcp_choice" | tr 'A-Z' 'a-z')" == "n" ]]; then
     info "Skipping MCP server setup"
     return
   fi
@@ -966,7 +968,7 @@ setup_git_aliases() {
     alias_choice="${alias_choice:-y}"
   fi
 
-  if [[ "${alias_choice,,}" == "n" ]]; then
+  if [[ "$(echo "$alias_choice" | tr 'A-Z' 'a-z')" == "n" ]]; then
     info "Skipping git aliases"
     return
   fi
@@ -1023,7 +1025,7 @@ print_summary() {
     echo -e "  ${YELLOW}${BOLD}Skipped (not blocking)${NC}"
     echo -e "  ${DIM}$(printf '%.0s-' $(seq 1 50))${NC}"
     for f in "${FAILED_REPOS[@]}"; do
-      echo -e "  ${WARN} $f  ${DIM}${REPO_DESC[$f]:-}${NC}"
+      echo -e "  ${WARN} $f  ${DIM}$(repo_desc "$f")${NC}"
     done
     echo ""
     echo -e "  ${DIM}To retry just the failed repos:${NC}"
